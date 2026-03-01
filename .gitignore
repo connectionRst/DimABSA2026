@@ -2,3 +2,4 @@
 .venv/
 Lora/
 unsloth_*/
+*.zip
