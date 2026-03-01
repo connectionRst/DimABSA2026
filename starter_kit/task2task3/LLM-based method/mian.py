@@ -4,12 +4,12 @@ from tqdm import tqdm
 import argparse
 import os
 
-import mytools
+import mymod
 
 os.environ["UNSLOTH_USE_MODELSCOPE"] = "1"
-PREFIX = mytools.prefix
-MODEL_TYPES = mytools.models
-DOMAIN_LANG = mytools.domain_lang
+PREFIX = mymod.prefix
+MODEL_TYPES = mymod.models
+DOMAIN_LANG = mymod.domain_lang
 
 # task config
 lr = 2e-4  # unsloth: use 2e-4 if the data is small
@@ -57,7 +57,7 @@ def train(model_id, model_type, lr, task, domain, *, resume=False):
 
     # ### Step 4: Load the LLM from Hugging Face and apply LoRA for fine-tuning
     # tokenizer and model setting
-    model, tokenizer = mytools.get_model(model_type, model_id)
+    model, tokenizer = mymod.get_model(model_type, model_id)
 
     # covert dataset to train template
     # yes, as tokenizer need to be loaded first, this cannot be raised top
@@ -69,16 +69,16 @@ def train(model_id, model_type, lr, task, domain, *, resume=False):
                 f"({q['Aspect']}, {q['Opinion']}, {q['VA']})"
                 for q in quads
             ])
-            instruction = mytools.get_instruction_task2()
+            instruction = mymod.get_instruction_task2()
         elif task == 3:
             answer = ", ".join((
                 f"({q['Aspect']}, {q['Category']}, {q['Opinion']}, {q['VA']})"
                 for q in quads
             ))
-            instruction = mytools.get_instruction_task3(domain)
+            instruction = mymod.get_instruction_task3(domain)
         else: raise ValueError("invalid task", task)
         prompt = instruction + "[Text] " + text + "\n\nOutput:"
-        msg = mytools.wrap_prompt(model_type, prompt, answer)
+        msg = mymod.wrap_prompt(model_type, prompt, answer)
         return { "text": tokenizer.apply_chat_template(
                     msg, tokenize=False, add_generation_prompt=False,
                     add_special_tokens=False
@@ -118,7 +118,7 @@ def train(model_id, model_type, lr, task, domain, *, resume=False):
 
     #print(trainer.train_dataset[100]["input_ids"])
 
-    # TODO refractor this to mytools.py module
+    # TODO refractor this to mymod.py module
     from unsloth.chat_templates import train_on_responses_only
     if model_type in ("gemma-3"):
         trainer = train_on_responses_only(
@@ -143,10 +143,10 @@ def infer(model_id, model_type, task, domain, lang):
     print(f"{model_id=}, {model_type=}, {task=}, {domain=}, {lang=}")
     assert lang in DOMAIN_LANG[domain]
     if task == 2:
-        instruction = mytools.get_instruction_task2()
+        instruction = mymod.get_instruction_task2()
         key = "Triplet"
     elif task == 3:
-        instruction = mytools.get_instruction_task3(domain)
+        instruction = mymod.get_instruction_task3(domain)
         key = "Quadruplet"
     else: raise ValueError("not supported task")
 
@@ -158,7 +158,7 @@ def infer(model_id, model_type, task, domain, lang):
     # Display the data info
     print(predict_dataset["train"][0]) # type: ignore
 
-    model, tokenizer = mytools.get_model(model_type, model_id, fast_infer=True)
+    model, tokenizer = mymod.get_model(model_type, model_id, fast_infer=True)
 
     # ### Step 6: Run Inference and Extract Structured Sentiment Outputs
 
@@ -167,7 +167,7 @@ def infer(model_id, model_type, task, domain, lang):
     for i, sample in enumerate(tqdm(predict_dataset["train"])):
         text = sample["Text"]
         final_prompt = instruction + '[Text] ' + text + '\n\nOutput:'
-        messages = mytools.wrap_prompt(model_type, final_prompt)
+        messages = mymod.wrap_prompt(model_type, final_prompt)
 
         text = tokenizer.apply_chat_template(
             messages,
@@ -189,7 +189,7 @@ def infer(model_id, model_type, task, domain, lang):
         dump_data = {
             "ID": sample.get("ID", f"sample_{i}"),
             "Text": sample["Text"],
-            key: mytools.extract_answer(extracted_text, task),
+            key: mymod.extract_answer(extracted_text, task),
         }
 
         tqdm.write(repr(dump_data))
