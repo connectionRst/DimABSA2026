@@ -545,9 +545,8 @@ device = "cuda"
 # TODO split these logic to their main?
 # train_urls = [f"{PREFIX}/subtask_1/{lang}/{lang}_{domain}_train_alltasks.jsonl" for domain in domain_lang.keys() for lang in domain_lang[domain]]
 train_urls = [f"{PREFIX}/subtask_1/{lang}/{lang}_{domain}_train_alltasks.jsonl" for domain in lang_domain[lang]]
-train_raw = []  # cause python flattening is sh*t, would rather use concat
-for url in train_urls: train_raw += load_jsonl(url)
-train_df = jsonl_to_df(train_raw)
+train_raws = [load_jsonl(x) for x in train_urls]
+train_df = pd.concat((jsonl_to_df(x) for x in train_raws))
 # split 10% for dev
 train_df, dev_df = train_test_split(train_df, test_size=0.1, random_state=42)
 
