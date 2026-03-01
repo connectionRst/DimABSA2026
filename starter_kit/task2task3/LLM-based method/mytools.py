@@ -7,6 +7,8 @@ domain_lang = {
     "hotel": ["jpn"]
 }
 
+# TODO save model_type in a function.
+model_type = None
 def get_model(model_type, model_path, *, fast_infer=False):
     '''
     return (model w/ lora, tokenizer)
@@ -32,24 +34,25 @@ def get_model(model_type, model_path, *, fast_infer=False):
         chat_template = model_type,
     )
 
-    if model_type == "gemma-3":
-        # lora setting
-        model = FastLanguageModel.get_peft_model(
-            model,
-            r = 8,
-            lora_alpha = 8,
-            lora_dropout = 0,
-            finetune_vision_layers = False, # Turn off for just text!
-        )
-    elif model_type == "qwen-3":
-        model = FastLanguageModel.get_peft_model(
-            model,
-            r = 8,
-            lora_alpha = 8,
-            lora_dropout = 0,
-        )
-    else: raise ValueError("invalid model_type", model_type)
     if fast_infer: FastLanguageModel.for_inference(model)
+    else:
+        if model_type == "gemma-3":
+            # lora setting
+            model = FastLanguageModel.get_peft_model(
+                model,
+                r = 8,
+                lora_alpha = 8,
+                lora_dropout = 0,
+                finetune_vision_layers = False, # Turn off for just text!
+            )
+        elif model_type == "qwen-3":
+            model = FastLanguageModel.get_peft_model(
+                model,
+                r = 8,
+                lora_alpha = 8,
+                lora_dropout = 0,
+            )
+        else: raise ValueError("invalid model_type", model_type)
     return model, tokenizer
 
 def get_instruction_task2():
@@ -78,7 +81,7 @@ def get_instruction_task2():
     '''
     return instruction
 
-def get_instruction_task3():
+def get_instruction_task3(domain):
     rest_entity = 'RESTAURANT, FOOD, DRINKS, AMBIENCE, SERVICE, LOCATION'
     rest_attribute = 'GENERAL, PRICES, QUALITY, STYLE_OPTIONS, MISCELLANEOUS'
 
@@ -162,14 +165,23 @@ def extract_answer(text, task):
 
     return result
 
-# FIXME adjust for VL model?
-def wrap_prompt(prompt, answer=None):
+def is_multimodal(model_type):
+    NATIVE_MULTIMODAL_LIST = ("gemma-3")
+    return model_type in NATIVE_MULTIMODAL_LIST
+
+def wrap_prompt(model_type, prompt, answer=None):
     prompt = [{
             "role": "user",
             "content": prompt
         }]
     if answer is not None:
         prompt.append({"role": "assistant", "content": answer})
+
+    # FIXME is it needed to split this logic to separate function for more strict
+    # typeguard, or as user only need the template so type is not necessary?
+    if is_multimodal(model_type):
+        for p in prompt:
+            p["content"] = [{"type": "text", "text": p["content"]}]
     return prompt
 
 def to_task_prompt_mapper(x, *, task, tokenizer):

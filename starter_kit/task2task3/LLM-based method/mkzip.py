@@ -1,5 +1,6 @@
 # %%
 import os
+import zipfile
 
 #task config
 subtask = "subtask_2" # subtask_2 or subtask_3

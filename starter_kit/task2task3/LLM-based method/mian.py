@@ -120,7 +120,7 @@ def infer(model_id, model_type, task, domain, lang):
     print(f"{model_id=}, {model_type=}, {task=}, {domain=}, {lang=}")
     assert lang in DOMAIN_LANG[domain]
     if task == 2: instruction = mytools.get_instruction_task2()
-    elif task == 3: instruction = mytools.get_instruction_task3()
+    elif task == 3: instruction = mytools.get_instruction_task3(domain)
     else: raise ValueError("not supported task")
 
     predict_url = f"{PREFIX}/subtask_{task}/{lang}/{lang}_{domain}_dev_task{task}.jsonl"
@@ -140,7 +140,7 @@ def infer(model_id, model_type, task, domain, lang):
     for i, sample in enumerate(tqdm(predict_dataset["train"])):
         text = sample["Text"]
         final_prompt = instruction + '[Text] ' + text + '\n\nOutput:'
-        messages = mytools.wrap_prompt(final_prompt)
+        messages = mytools.wrap_prompt(model_type, final_prompt)
 
         text = tokenizer.apply_chat_template(
             messages,
@@ -180,10 +180,10 @@ def infer(model_id, model_type, task, domain, lang):
     out_name = f"pred_{lang}_{domain}.jsonl"
 
     # ensure output folder
-    os.makedirs("subtask_{task}", exist_ok=True)
+    os.makedirs(f"subtask_{task}", exist_ok=True)
 
     # JSONL file path
-    jsonl_path = os.path.join("subtask_{task}", out_name)
+    jsonl_path = os.path.join(f"subtask_{task}", out_name)
 
     # write JSONL
     with open(jsonl_path, "w", encoding="utf-8") as f:
