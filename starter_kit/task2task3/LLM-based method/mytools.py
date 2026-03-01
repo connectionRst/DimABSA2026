@@ -183,32 +183,3 @@ def wrap_prompt(model_type, prompt, answer=None):
         for p in prompt:
             p["content"] = [{"type": "text", "text": p["content"]}]
     return prompt
-
-def to_task_prompt_mapper(x, *, task, tokenizer):
-    text = x["Text"]
-    quads = x.get("Quadruplet", [])
-    if task == 2:
-        answer = ", ".join([
-            f"({q['Aspect']}, {q['Opinion']}, {q['VA']})"
-            for q in quads
-        ])
-        instruction = get_instruction_task2()
-    elif task == 3:
-        answer = ", ".join((
-            f"({q['Aspect']}, {q['Category']}, {q['Opinion']}, {q['VA']})"
-            for q in quads
-        ))
-        instruction = get_instruction_task3()
-    else: raise ValueError("invalid task", task)
-    prompt = instruction + "[Text] " + text + "\n\nOutput:"
-    msg = wrap_prompt(prompt, answer)
-    try:
-        return {
-            "text":
-            tokenizer.apply_chat_template(
-                msg, tokenize=False, add_generation_prompt=False,
-                add_special_tokens=False
-            )
-        }
-    except:
-        return msg
