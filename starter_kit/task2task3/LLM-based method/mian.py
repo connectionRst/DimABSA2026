@@ -26,6 +26,9 @@ parser.add_argument('--model-type', default="gemma-3")
 parser.add_argument('--lr', type=float, default=2e-5)
 parser.add_argument('--task', type=int, default=2)
 parser.add_argument('--resume', type=bool, default=False)
+parser.add_argument('-p', type=float, default=0.8)
+parser.add_argument('-k', type=int, default=20)
+parser.add_argument('--temp', type=float, default=0.7)
 args = parser.parse_args()
 
 assert args.train_or_infer in ("train", "infer")
@@ -99,8 +102,8 @@ def train(model_id, model_type, lr, task, domain, *, resume=False):
         eval_dataset = None, # Can set up evaluation!
         args = SFTConfig(
             dataset_text_field = "text",
-            per_device_train_batch_size = 2,
-            gradient_accumulation_steps = 4, # Use GA to mimic batch size!
+            per_device_train_batch_size = 1,
+            gradient_accumulation_steps = 8, # Use GA to mimic batch size!
             warmup_steps = 5,
             num_train_epochs = 2, #
             learning_rate = lr, # Reduce to 2e-5 for long training runs
@@ -139,7 +142,7 @@ def train(model_id, model_type, lr, task, domain, *, resume=False):
     model.save_pretrained(lora_ckpt_path + "/model")  # Local saving
     tokenizer.save_pretrained(lora_ckpt_path + "/model")
 
-def infer(model_id, model_type, task, domain, lang):
+def infer(model_id, model_type, task, domain, lang, top_p, top_k, temp):
     print(f"{model_id=}, {model_type=}, {task=}, {domain=}, {lang=}")
     assert lang in DOMAIN_LANG[domain]
     if task == 2:
@@ -180,7 +183,7 @@ def infer(model_id, model_type, task, domain, lang):
         result = model.generate(
             **text.to("cuda"),
             max_new_tokens=1024,
-            temperature=0.7, top_p=0.8, top_k=20,
+            temperature=temp, top_p=top_p, top_k=top_k,
         )
 
         decoded = tokenizer.decode(result[0])  #FIXME output is None
@@ -219,5 +222,5 @@ def infer(model_id, model_type, task, domain, lang):
 if args.train_or_infer == "train":
     train(model_id, args.model_type, args.lr, args.task, args.domain, resume=args.resume)
 elif args.train_or_infer == "infer":
-    infer(model_id, args.model_type, args.task, args.domain, args.prd_lang)
+    infer(model_id, args.model_type, args.task, args.domain, args.prd_lang, args.p, args.k, args.temp)
 else: raise ValueError("unsupport operation")
