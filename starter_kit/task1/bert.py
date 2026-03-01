@@ -6,32 +6,32 @@
 # %% [markdown]
 # # SemEval-2026 Task 3 (Track A: DimABSA, Track B: DimStance)
 # # Subtask 1: Dimensional Aspect Sentiment Regression (DimASR)
-# 
+#
 # -----
-# 
+#
 # ## Starter Notebook
 # Leveraging Pretrained Language Models for Dimensional Sentiment Regression
-# 
-# 
+#
+#
 # ## Introduction:
-# 
+#
 # You are welcome to participate in our SemEval Shared Task!
-# 
+#
 # In this starter notebook, we will take you through the process of fine-tuning a pre-trained language model on a sample data to build a sentiment regressor. The notebook was adapted from a Hugginface implementation for such tasks.
-# 
+#
 # ### Outline:
-# 
+#
 # - Installation and importation of necessary libraries
 # Setting up the project parameters.
 # Running training and evaluation
 # Before you start:
-# 
+#
 # - It is strongly advised that you use a GPU to speed up training. To do this, go to the "Runtime" menu in Colab, select "Change runtime type" and then in the popup menu, choose "GPU" in the "Hardware accelerator" box.
-# 
+#
 # ### NB:
-# 
+#
 # The codes in this notebook are provided to familiarize yourselves with fine-tuning language models for sentiment regression. You may extend and (or) modify as appropriate to obtain competitive performances.
-# 
+#
 # ### Languages and Domains:
 # #### Track A: Subtask 1
 # - eng_restaurant
@@ -50,14 +50,14 @@
 # - kin-stance
 # - swa-stance
 # - twi-stance
-# 
-# 
+#
+#
 # ### Model:
 # This Starter Notebook uses the bert-base-multilingual-cased pretrained model, developed by Google. The model was trained with a masked language modeling (MLM) objective on the top 104 languages with the largest Wikipedia presence. You can find the model here: https://huggingface.co/google-bert/bert-base-multilingual-cased
-# 
+#
 # If your target language is not included in the common set supported by this model, you can search for a more suitable model on Hugging Face: https://huggingface.co/models
-# 
-# 
+#
+#
 
 # %%
 import json
@@ -93,36 +93,47 @@ def load_jsonl_url(url: str) -> List[Dict]:
 
 # %% [markdown]
 # ### Step 1: Load the competition data
-# 
-# - Read JSONL files (train/dev/predict) into Colab.  
-# - Train files contain Valence–Arousal (VA) labels.  
-# - Predict files have no VA labels.  
+#
+# - Read JSONL files (train/dev/predict) into Colab.
+# - Train files contain Valence–Arousal (VA) labels.
+# - Predict files have no VA labels.
 # - This script:
 #   1. Loads the JSONL data.
 #   2. Splits 10% of train data as dev set.
 #   3. Converts JSONL into DataFrames (ID, Text, Aspect, Valence, Arousal).
 #   4. Prints the first few rows for checking.
-# 
+#
 
 # %%
-accl = Accelerator()
-device = accl.device
-
 #task config
-_PREFIX = "../../task-dataset/track_a"
-subtask = "subtask_1"#don't change
+PREFIX = "../../task-dataset/track_a"
 task = "task1"#don't change
-prd_lang = "eng" #chang the language you want to test
+lang = "eng" #chang the language you want to test
 domain = "laptop" #change what domain you want to test
 domain_lang = {
     "hotel": ["jpn"],
     "restaurant": ["eng", "rus", "tat", "ukr", "zho"],
-    "laptop": ["eng", "zho"]
+    "laptop": ["eng", "zho"],
+    "finance": ["jpn", "zho"]  # watch out for this
 }
 
-train_urls = [f"{_PREFIX}/{subtask}/{lang}/{lang}_{domain}_train_alltasks.jsonl" for lang in domain_lang[domain]]
-predict_url = f"../../task-dataset/track_a/{subtask}/{prd_lang}/{prd_lang}_{domain}_dev_{task}.jsonl"
+# TODO auto generate from domain_lang, but python grammar sucks
+lang_domain = {
+    "jpn": ["hotel", "finance"],
+    "eng": ["laptop", "restaurant"],
+    "zho": ["laptop", "restaurant", "finance"],
+    "rus": ["restaurant"],
+    "tat": ["restaurant"],
+    "ukr": ["restaurant"],
+}
 
+
+# FIXME would the model being too small to fit all train data?
+# train_urls = [f"{PREFIX}/subtask_1/{lang}/{lang}_{domain}_train_alltasks.jsonl" for domain in domain_lang.keys() for lang in domain_lang[domain]]
+train_urls = [f"{PREFIX}/subtask_1/{lang}/{lang}_{domain}_train_alltasks.jsonl" for domain in lang_domain[lang]]
+predict_url = f"{PREFIX}/subtask_1/{lang}/{lang}_{domain}_dev_{task}.jsonl"
+
+device = "cuda"
 # model config
 # choose your encoding model
 model_name = "/home/na/.cache/modelscope/hub/models/google-bert/bert-base-multilingual-cased"
@@ -135,7 +146,11 @@ batchsize = 16
 tok_max_len = 512
 print(f"lr: {lr}, epochs: {epochs}, batchsize: {batchsize}")
 
-train_raw = [load_jsonl(train_url) for train_url in train_urls]
+
+# TODO fp flatten logic
+train_raw = []
+for train_url in train_urls:
+    train_raw += load_jsonl(train_url)
 predict_raw = load_jsonl(predict_url)
 
 # %% [markdown]
@@ -143,7 +158,7 @@ predict_raw = load_jsonl(predict_url)
 # 1. roberta-large
 # 2. roberta-base
 # 3. bert-base-multilingual-uncased
-# 
+#
 # more models please visit [huggingface](https://huggingface.co/models)
 
 # %%
@@ -193,19 +208,18 @@ train_df, dev_df = train_test_split(train_df, test_size=0.1, random_state=42)
 # %%
 from IPython.display import display, Markdown
 
-if accl.is_local_main_process:
-    display(Markdown(f"### {subtask}_{lang}_{domain} train_df"))
-    display(train_df.head())
+display(Markdown(f"### subtask_1_{lang}_{domain} train_df"))
+display(train_df.head())
 
-    display(Markdown(f"### {subtask}_{lang}_{domain} dev_df"))
-    display(dev_df.head())
+display(Markdown(f"### subtask_1_{lang}_{domain} dev_df"))
+display(dev_df.head())
 
-    display(Markdown(f"### {subtask}_{lang}_{domain} predict_df"))
-    display(predict_df.head())
+display(Markdown(f"### subtask_1_{lang}_{domain} predict_df"))
+display(predict_df.head())
 
 # %% [markdown]
 # ### Step 2: Build Dataset and DataLoader
-# 
+#
 # - Define a custom `VADataset` class for PyTorch:
 #   - Joins Aspect + Text into a single input string.
 #   - Uses BERT tokenizer to create `input_ids` and `attention_mask`.
@@ -256,7 +270,7 @@ class VADataset(Dataset):
             "labels": torch.tensor(self.labels[idx], dtype=torch.float)
         }
 
-batchsize = locals().get("batchsize", 64)
+# batchsize = locals().get("batchsize", 64)
 # convert to Dataset and Dataloader
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 
@@ -269,21 +283,21 @@ dev_loader = DataLoader(dev_dataset, batch_size=batchsize, shuffle=True)
 
 # %% [markdown]
 # ### Step 3: Build and Train TransformerVARegressor
-# 
-# - Define **`TransformerVARegressor`**:  
-#   - Uses pretrained Transformer (e.g. BERT) as backbone.  
-#   - Adds dropout and linear layer to predict **Valence** and **Arousal**.  
-# 
-# - Implement helper methods:  
-#   - `train_epoch`: one training pass with optimizer and loss.  
-#   - `eval_epoch`: validation pass without gradient updates.  
-# 
-# - Set training parameters:  
-#   - `lr = 1e-5`, `epochs = 5`, `loss_fn = MSELoss`.  
-# 
-# - Run training loop:  
+#
+# - Define **`TransformerVARegressor`**:
+#   - Uses pretrained Transformer (e.g. BERT) as backbone.
+#   - Adds dropout and linear layer to predict **Valence** and **Arousal**.
+#
+# - Implement helper methods:
+#   - `train_epoch`: one training pass with optimizer and loss.
+#   - `eval_epoch`: validation pass without gradient updates.
+#
+# - Set training parameters:
+#   - `lr = 1e-5`, `epochs = 5`, `loss_fn = MSELoss`.
+#
+# - Run training loop:
 #   - For each epoch, print training and validation loss to monitor progress.
-# 
+#
 
 # %%
 #====step 3 build your model ====
@@ -326,8 +340,7 @@ class TransformerVARegressor(nn.Module):
 def train_epoch(model, dataloader, optimizer, loss_fn):
     model.train()
     total_loss = 0
-    global accl
-    for batch in tqdm(dataloader, disable=not accl.is_local_main_process):
+    for batch in tqdm(dataloader):
         input_ids = batch["input_ids"]
         attn_mask = batch["attention_mask"]
         labels = batch["labels"]
@@ -335,7 +348,7 @@ def train_epoch(model, dataloader, optimizer, loss_fn):
         optimizer.zero_grad()
         outputs = model(input_ids, attn_mask)
         loss = loss_fn(outputs, labels)
-        accl.backward(loss)
+        loss.backward()
         optimizer.step()
 
         total_loss += loss.item()
@@ -362,17 +375,14 @@ lr = locals().get("lr", 1e-5)
 epochs = locals().get("epochs", 50)
 
 optimizer = torch.optim.AdamW(model.parameters(), lr=lr)
-loss_fn = nn.MSELoss()  
-model, optimizer, train_loader = accl.prepare(
-    model, optimizer, train_loader
-)
+loss_fn = nn.MSELoss()
 
 # placeholder as train should happen here
 
 
 # %% [markdown]
 # ### Step 4: Evaluate model performance on dev set
-# 
+#
 # - Define helper function `get_prd`:
 #   - For **dev**: get both predictions and gold labels.
 #   - For **pred**: only get predictions (no gold labels).
@@ -381,20 +391,20 @@ model, optimizer, train_loader = accl.prepare(
 #   - Compute normalized RMSE for combined VA score.
 # - Run evaluation on laptop and restaurant dev sets.
 # - Print metrics to check how well the models perform.
-# 
+#
 
 # %%
 #==== step 4 use dev data to check your model's performance ====
 @overload
 def get_prd(
-    model: TransformerVARegressor, 
-    dataloder, 
+    model: TransformerVARegressor,
+    dataloder,
     type: Literal["dev"] = "dev"
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]: ...
 @overload
 def get_prd(
-    model: TransformerVARegressor, 
-    dataloder, 
+    model: TransformerVARegressor,
+    dataloder,
     type: Literal["pred"]
 ) -> tuple[np.ndarray, np.ndarray]: ...
 def get_prd(model: TransformerVARegressor, dataloder, type = "dev"):
@@ -497,14 +507,14 @@ def _get_prd_dev(*, epoch = 0):
 # okay do benchmark on every epoch
 for epoch in range(epochs):
     train_loss = train_epoch(model, train_loader, optimizer, loss_fn)
-    accl.wait_for_everyone()
     val_loss = eval_epoch(model, dev_loader, loss_fn)
-    accl.print(f"model:{model_name} Epoch:{epoch+1}: train={train_loss:.4f}, val={val_loss:.4f}")
-    if accl.is_local_main_process: _get_prd_dev(epoch=epoch)
+    print(f"model:{model_name} Epoch:{epoch+1}: train={train_loss:.4f}, val={val_loss:.4f}")
+    _get_prd_dev(epoch=epoch)
 
+model.save
 # %% [markdown]
 # ### Step 5: Save and submit prediction results
-# 
+#
 # - Define helper `df_to_jsonl`:
 #   - Sort by ID number.
 #   - Group rows by ID.
@@ -512,20 +522,20 @@ for epoch in range(epochs):
 # - Run the model on the predict sets (laptop & restaurant).
 # - Fill in predicted Valence/Arousal values.
 # - Export three JSONL files:
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 #   - `pred_eng_laptop.jsonl`
 #   - `pred_eng_restaurant.jsonl`
 #   - `pred_zho_laptop.jsonl`
 # - These files can be uploaded as the final submission.
-# 
+#
 
 # %% [markdown]
 # ### File Naming Guidelines
 # When submitting your predictions on the Codabench task page:
-# 
+#
 # Decide the target language(s) and domain(s). Each submission file corresponds to one language-domain combination.
 # For each language-domain combination, name the file pred_[lang_code]_[domain].jsonl, where
 # - [lang_code] represents a 3-letter language code, and
@@ -575,39 +585,22 @@ df_to_jsonl(predict_df, f"pred_{lang}_{domain}.jsonl")
 # ### Download the submit files
 
 # %%
-import os
-import shutil
-import zipfile
 
-# Create the folder subtask if it does not exist
-os.makedirs(subtask, exist_ok=True)
-
-# Move the three files into the subtask folder
-for fname in [f"pred_{lang}_{domain}.jsonl"]:
-    if os.path.exists(fname):
-        shutil.move(fname, os.path.join(subtask, fname))
-
-# Create a zip file named "submit.zip" containing the folder subtask
-with zipfile.ZipFile(f"{subtask}.zip", "w", zipfile.ZIP_DEFLATED) as zf:
-    for root, _, files_in_dir in os.walk(subtask):
-        for file in files_in_dir:
-            path = os.path.join(root, file)
-            # Keep folder structure inside the zip
-            zf.write(path, os.path.relpath(path, "."))
+print("use zip or mkzip.py to pack prd result!")
 
 # Download the created zip file to local machine
 
 # %% [markdown]
 # ### Conclusion
-# 
+#
 # In this notebook, we walked through the full pipeline for **Dimensional Aspect Sentiment Regression (DimASR)**:
-# 
-# 1. **Load data**: Import the competition JSONL files, split train/dev sets, and convert to DataFrames.  
-# 2. **Build dataset & dataloaders**: Define a custom `VADataset` to tokenize text and prepare `[Valence, Arousal]` labels.  
-# 3. **Train & evaluate**: Train BERT-based regressors and check model performance on the dev sets using PCC and RMSE metrics.  
-# 4. **Predict & submit**: Run the trained models on the prediction sets, generate VA scores, and save results as JSONL for submission.  
-# 
+#
+# 1. **Load data**: Import the competition JSONL files, split train/dev sets, and convert to DataFrames.
+# 2. **Build dataset & dataloaders**: Define a custom `VADataset` to tokenize text and prepare `[Valence, Arousal]` labels.
+# 3. **Train & evaluate**: Train BERT-based regressors and check model performance on the dev sets using PCC and RMSE metrics.
+# 4. **Predict & submit**: Run the trained models on the prediction sets, generate VA scores, and save results as JSONL for submission.
+#
 # This pipeline ensures that your model is trained, validated, and ready for competition submission. You can further improve results by tuning hyperparameters, trying different pretrained models, or applying data augmentation strategies.
-# 
+#
 
 
