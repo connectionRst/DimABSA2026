@@ -515,15 +515,21 @@ assert lang in lang_domain
 # model config
 model_name = args.model_name
 # choose your encoding model
-supported_model_name = (
+ms_model = (
     "google-bert/bert-base-multilingual-cased",
-    "ai-modelscope/roberta-large",
-    "answerdotai/ModernBERT-large",
-    "jhu-clsp/mmBERT-base"
+    "ai-modelscope/xlm-roberta-large",
+    "jhu-clsp/mmBERT-base",
+    "microsoft/mdeberta-v3-base"
 )
-assert model_name in supported_model_name
+hf_model = (
+    "nlptown/bert-base-multilingual-uncased-sentiment",
+)
+assert model_name in (*ms_model, *hf_model)
 if args.train_or_infer == "train":
-    model_path = MODEL_PREFIX + model_name
+    if model_name in hf_model:
+        model_path = model_name
+    else:
+        model_path = MODEL_PREFIX + model_name
 elif args.train_or_infer == "infer":  # TODO more elegant way to read saved model
     model_path = os.path.abspath(f"./models/{lang}/{model_name}")
 lr = args.lr
