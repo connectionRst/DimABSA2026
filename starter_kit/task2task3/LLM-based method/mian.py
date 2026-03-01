@@ -119,8 +119,12 @@ def train(model_id, model_type, lr, task, domain, *, resume=False):
 def infer(model_id, model_type, task, domain, lang):
     print(f"{model_id=}, {model_type=}, {task=}, {domain=}, {lang=}")
     assert lang in DOMAIN_LANG[domain]
-    if task == 2: instruction = mytools.get_instruction_task2()
-    elif task == 3: instruction = mytools.get_instruction_task3(domain)
+    if task == 2:
+        instruction = mytools.get_instruction_task2()
+        key = "Triplet"
+    elif task == 3:
+        instruction = mytools.get_instruction_task3(domain)
+        key = "Quadruplet"
     else: raise ValueError("not supported task")
 
     predict_url = f"{PREFIX}/subtask_{task}/{lang}/{lang}_{domain}_dev_task{task}.jsonl"
@@ -158,8 +162,6 @@ def infer(model_id, model_type, task, domain, lang):
 
         decoded = tokenizer.decode(result[0])  #FIXME output is None
         extracted_text = decoded.split("\n")[-1]
-
-        key = "Triplet" if task == "task2" else "Quadruplet"
 
         dump_data = {
             "ID": sample.get("ID", f"sample_{i}"),
