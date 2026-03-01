@@ -1,0 +1,200 @@
+{"ID": "finance_aspect_va_dev_1", "Aspect_VA": [{"Aspect": "発行済株式総数", "VA": "4.00#5.53"}, {"Aspect": "資本金", "VA": "5.84#5.16"}, {"Aspect": "資本準備金", "VA": "5.83#5.23"}]}
+{"ID": "finance_aspect_va_dev_2", "Aspect_VA": [{"Aspect": "ONE FUKUOKA BLDG.新築工事", "VA": "4.06#5.20"}, {"Aspect": "天神大牟田線春日原～下大利駅間連続立体交差工事", "VA": "6.83#5.85"}]}
+{"ID": "finance_aspect_va_dev_3", "Aspect_VA": [{"Aspect": "東北事業所", "VA": "5.86#5.27"}]}
+{"ID": "finance_aspect_va_dev_4", "Aspect_VA": [{"Aspect": "土地", "VA": "5.30#5.04"}]}
+{"ID": "finance_aspect_va_dev_5", "Aspect_VA": [{"Aspect": "株式数", "VA": "4.44#5.35"}]}
+{"ID": "finance_aspect_va_dev_6", "Aspect_VA": [{"Aspect": "ゴルフ場業界", "VA": "4.02#4.93"}]}
+{"ID": "finance_aspect_va_dev_7", "Aspect_VA": [{"Aspect": "資産又は資産グループ", "VA": "4.61#5.49"}]}
+{"ID": "finance_aspect_va_dev_8", "Aspect_VA": [{"Aspect": "回収可能価額", "VA": "4.23#5.02"}]}
+{"ID": "finance_aspect_va_dev_9", "Aspect_VA": [{"Aspect": "純資産", "VA": "4.04#5.26"}]}
+{"ID": "finance_aspect_va_dev_10", "Aspect_VA": [{"Aspect": "当該賃貸等不動産", "VA": "3.54#5.47"}]}
+{"ID": "finance_aspect_va_dev_11", "Aspect_VA": [{"Aspect": "流動負債", "VA": "5.55#5.16"}]}
+{"ID": "finance_aspect_va_dev_12", "Aspect_VA": [{"Aspect": "検査部門", "VA": "3.69#4.83"}, {"Aspect": "セラミック基板", "VA": "4.26#5.37"}]}
+{"ID": "finance_aspect_va_dev_13", "Aspect_VA": [{"Aspect": "株式市場", "VA": "4.51#5.14"}]}
+{"ID": "finance_aspect_va_dev_14", "Aspect_VA": [{"Aspect": "純資産額", "VA": "4.01#5.40"}]}
+{"ID": "finance_aspect_va_dev_15", "Aspect_VA": [{"Aspect": "負債合計", "VA": "6.47#5.59"}]}
+{"ID": "finance_aspect_va_dev_16", "Aspect_VA": [{"Aspect": "事業", "VA": "5.75#5.18"}]}
+{"ID": "finance_aspect_va_dev_17", "Aspect_VA": [{"Aspect": "生産量", "VA": "6.23#5.56"}]}
+{"ID": "finance_aspect_va_dev_18", "Aspect_VA": [{"Aspect": "情報機器", "VA": "5.83#5.31"}, {"Aspect": "新製品", "VA": "6.05#5.32"}, {"Aspect": "国内市場", "VA": "3.78#5.50"}, {"Aspect": "欧州", "VA": "3.37#5.56"}, {"Aspect": "米州市場", "VA": "5.38#5.06"}, {"Aspect": "フォトプリンター", "VA": "5.88#5.18"}]}
+{"ID": "finance_aspect_va_dev_19", "Aspect_VA": [{"Aspect": "株式数", "VA": "5.77#5.22"}]}
+{"ID": "finance_aspect_va_dev_20", "Aspect_VA": [{"Aspect": "人件費", "VA": "5.63#5.28"}, {"Aspect": "支払手数料", "VA": "5.75#5.15"}, {"Aspect": "租税公課", "VA": "3.16#5.79"}]}
+{"ID": "finance_aspect_va_dev_21", "Aspect_VA": [{"Aspect": "売上高", "VA": "6.70#6.01"}, {"Aspect": "総資産額", "VA": "5.77#5.33"}]}
+{"ID": "finance_aspect_va_dev_22", "Aspect_VA": [{"Aspect": "販売見込み", "VA": "5.54#5.11"}]}
+{"ID": "finance_aspect_va_dev_23", "Aspect_VA": [{"Aspect": "製造コスト", "VA": "5.70#5.21"}]}
+{"ID": "finance_aspect_va_dev_24", "Aspect_VA": [{"Aspect": "受注工事", "VA": "3.92#5.53"}]}
+{"ID": "finance_aspect_va_dev_25", "Aspect_VA": [{"Aspect": "当社グループサービス", "VA": "5.86#5.43"}]}
+{"ID": "finance_aspect_va_dev_26", "Aspect_VA": [{"Aspect": "収益性", "VA": "3.62#5.59"}]}
+{"ID": "finance_aspect_va_dev_27", "Aspect_VA": [{"Aspect": "純資産", "VA": "5.81#4.99"}]}
+{"ID": "finance_aspect_va_dev_28", "Aspect_VA": [{"Aspect": "土産物", "VA": "4.43#5.25"}, {"Aspect": "食品原材料", "VA": "3.93#5.35"}, {"Aspect": "外食需要", "VA": "5.82#5.14"}, {"Aspect": "糖粉関連事業", "VA": "5.73#5.08"}]}
+{"ID": "finance_aspect_va_dev_29", "Aspect_VA": [{"Aspect": "ヘルスケア事業", "VA": "3.83#5.29"}]}
+{"ID": "finance_aspect_va_dev_30", "Aspect_VA": [{"Aspect": "営業利益", "VA": "5.28#5.33"}]}
+{"ID": "finance_aspect_va_dev_31", "Aspect_VA": [{"Aspect": "売上収益", "VA": "6.14#5.25"}]}
+{"ID": "finance_aspect_va_dev_32", "Aspect_VA": [{"Aspect": "テイクアウト", "VA": "3.93#5.03"}, {"Aspect": "デリバリー", "VA": "5.28#4.98"}]}
+{"ID": "finance_aspect_va_dev_33", "Aspect_VA": [{"Aspect": "医療向け生産", "VA": "4.08#5.32"}]}
+{"ID": "finance_aspect_va_dev_34", "Aspect_VA": [{"Aspect": "半導体市場", "VA": "6.38#5.41"}, {"Aspect": "中国", "VA": "3.66#5.63"}, {"Aspect": "アジア地域全体", "VA": "4.80#5.27"}]}
+{"ID": "finance_aspect_va_dev_35", "Aspect_VA": [{"Aspect": "三井アウトレットパークマリンピア神戸", "VA": "4.50#5.37"}]}
+{"ID": "finance_aspect_va_dev_36", "Aspect_VA": [{"Aspect": "ハードウェア販売部門", "VA": "5.81#5.28"}]}
+{"ID": "finance_aspect_va_dev_37", "Aspect_VA": [{"Aspect": "賃貸マンション", "VA": "5.63#5.00"}]}
+{"ID": "finance_aspect_va_dev_38", "Aspect_VA": [{"Aspect": "諸経費", "VA": "4.17#5.02"}]}
+{"ID": "finance_aspect_va_dev_39", "Aspect_VA": [{"Aspect": "棚卸資産", "VA": "3.91#5.07"}]}
+{"ID": "finance_aspect_va_dev_40", "Aspect_VA": [{"Aspect": "仕入債務", "VA": "3.43#5.55"}]}
+{"ID": "finance_aspect_va_dev_41", "Aspect_VA": [{"Aspect": "有価証券", "VA": "6.14#5.35"}, {"Aspect": "営業外収益", "VA": "6.04#5.76"}]}
+{"ID": "finance_aspect_va_dev_42", "Aspect_VA": [{"Aspect": "材料価格", "VA": "5.87#5.28"}, {"Aspect": "人件費", "VA": "3.75#5.48"}]}
+{"ID": "finance_aspect_va_dev_43", "Aspect_VA": [{"Aspect": "営業活動", "VA": "3.11#5.61"}, {"Aspect": "営業利益", "VA": "5.79#5.40"}]}
+{"ID": "finance_aspect_va_dev_44", "Aspect_VA": [{"Aspect": "貸出金利息", "VA": "4.08#5.08"}, {"Aspect": "役務収益", "VA": "6.09#5.79"}]}
+{"ID": "finance_aspect_va_dev_45", "Aspect_VA": [{"Aspect": "海外パートナー", "VA": "5.80#5.15"}]}
+{"ID": "finance_aspect_va_dev_46", "Aspect_VA": [{"Aspect": "J-MAX", "VA": "3.66#6.01"}, {"Aspect": "自動車部品", "VA": "5.57#5.12"}, {"Aspect": "金型設備", "VA": "5.57#4.83"}]}
+{"ID": "finance_aspect_va_dev_47", "Aspect_VA": [{"Aspect": "稼働中の案件", "VA": "5.75#5.36"}]}
+{"ID": "finance_aspect_va_dev_48", "Aspect_VA": [{"Aspect": "建設資材", "VA": "3.67#5.35"}, {"Aspect": "エネルギー", "VA": "5.52#4.87"}]}
+{"ID": "finance_aspect_va_dev_49", "Aspect_VA": [{"Aspect": "ステンレス鋼その他金属材料の販売事業", "VA": "5.73#5.20"}]}
+{"ID": "finance_aspect_va_dev_50", "Aspect_VA": [{"Aspect": "世界経済", "VA": "5.71#5.20"}]}
+{"ID": "finance_aspect_va_dev_51", "Aspect_VA": [{"Aspect": "利益", "VA": "5.66#5.07"}]}
+{"ID": "finance_aspect_va_dev_52", "Aspect_VA": [{"Aspect": "医療機関向けサービス", "VA": "5.80#5.39"}]}
+{"ID": "finance_aspect_va_dev_53", "Aspect_VA": [{"Aspect": "当社製品", "VA": "6.30#5.33"}]}
+{"ID": "finance_aspect_va_dev_54", "Aspect_VA": [{"Aspect": "その他飲食事業", "VA": "5.18#5.69"}]}
+{"ID": "finance_aspect_va_dev_55", "Aspect_VA": [{"Aspect": "経常損益", "VA": "5.86#5.23"}]}
+{"ID": "finance_aspect_va_dev_56", "Aspect_VA": [{"Aspect": "生産台数", "VA": "5.84#5.55"}]}
+{"ID": "finance_aspect_va_dev_57", "Aspect_VA": [{"Aspect": "原材料価格", "VA": "6.32#5.79"}, {"Aspect": "直販製品の販売", "VA": "6.12#5.66"}, {"Aspect": "セグメント利益", "VA": "3.47#5.83"}]}
+{"ID": "finance_aspect_va_dev_58", "Aspect_VA": [{"Aspect": "横浜営業所の建物", "VA": "5.44#5.05"}, {"Aspect": "機械", "VA": "6.16#5.37"}, {"Aspect": "装置", "VA": "3.69#5.50"}]}
+{"ID": "finance_aspect_va_dev_59", "Aspect_VA": [{"Aspect": "平均生徒数", "VA": "3.98#5.14"}]}
+{"ID": "finance_aspect_va_dev_60", "Aspect_VA": [{"Aspect": "国内ウェディング市場", "VA": "5.82#5.04"}]}
+{"ID": "finance_aspect_va_dev_61", "Aspect_VA": [{"Aspect": "マルイチメックスS.A.de C.V.(Maruichimex社）", "VA": "3.39#5.87"}]}
+{"ID": "finance_aspect_va_dev_62", "Aspect_VA": [{"Aspect": "投資活動による資金", "VA": "3.88#5.49"}]}
+{"ID": "finance_aspect_va_dev_63", "Aspect_VA": [{"Aspect": "不動産事業", "VA": "5.74#4.90"}]}
+{"ID": "finance_aspect_va_dev_64", "Aspect_VA": [{"Aspect": "一般管理費", "VA": "5.61#5.04"}, {"Aspect": "販売費", "VA": "3.63#5.70"}]}
+{"ID": "finance_aspect_va_dev_65", "Aspect_VA": [{"Aspect": "資本の財源及び資金", "VA": "4.29#5.19"}]}
+{"ID": "finance_aspect_va_dev_66", "Aspect_VA": [{"Aspect": "日系外食チェーン", "VA": "3.55#5.60"}]}
+{"ID": "finance_aspect_va_dev_67", "Aspect_VA": [{"Aspect": "売上高", "VA": "3.87#5.13"}]}
+{"ID": "finance_aspect_va_dev_68", "Aspect_VA": [{"Aspect": "事業収益性", "VA": "5.55#5.26"}]}
+{"ID": "finance_aspect_va_dev_69", "Aspect_VA": [{"Aspect": "金額", "VA": "5.72#5.14"}, {"Aspect": "取引内容", "VA": "3.63#5.25"}]}
+{"ID": "finance_aspect_va_dev_70", "Aspect_VA": [{"Aspect": "ＮＡＳ ® 電池", "VA": "5.36#5.06"}, {"Aspect": "欧州", "VA": "6.24#5.90"}]}
+{"ID": "finance_aspect_va_dev_71", "Aspect_VA": [{"Aspect": "売上高", "VA": "6.13#5.66"}, {"Aspect": "取扱量", "VA": "6.55#5.88"}]}
+{"ID": "finance_aspect_va_dev_72", "Aspect_VA": [{"Aspect": "事業領域", "VA": "6.26#5.52"}]}
+{"ID": "finance_aspect_va_dev_73", "Aspect_VA": [{"Aspect": "凍結防止剤", "VA": "3.73#5.17"}, {"Aspect": "セグメント利益", "VA": "3.92#5.23"}, {"Aspect": "売上高", "VA": "5.21#5.24"}]}
+{"ID": "finance_aspect_va_dev_74", "Aspect_VA": [{"Aspect": "EBITDA", "VA": "3.21#5.61"}, {"Aspect": "現預金", "VA": "4.23#5.21"}, {"Aspect": "資金力", "VA": "5.95#4.98"}]}
+{"ID": "finance_aspect_va_dev_75", "Aspect_VA": [{"Aspect": "売上高", "VA": "4.02#5.32"}, {"Aspect": "営業利益", "VA": "4.55#5.12"}, {"Aspect": "販売数量", "VA": "3.60#5.57"}, {"Aspect": "経常利益", "VA": "6.68#5.91"}]}
+{"ID": "finance_aspect_va_dev_76", "Aspect_VA": [{"Aspect": "特別損失", "VA": "5.61#4.87"}]}
+{"ID": "finance_aspect_va_dev_77", "Aspect_VA": [{"Aspect": "投資有価証券", "VA": "5.65#5.09"}]}
+{"ID": "finance_aspect_va_dev_78", "Aspect_VA": [{"Aspect": "株式会社エイビス", "VA": "3.69#5.30"}, {"Aspect": "ソフトウェア販売等", "VA": "3.79#5.32"}]}
+{"ID": "finance_aspect_va_dev_79", "Aspect_VA": [{"Aspect": "資金", "VA": "5.87#5.05"}]}
+{"ID": "finance_aspect_va_dev_80", "Aspect_VA": [{"Aspect": "エンタメ業界", "VA": "5.12#5.49"}, {"Aspect": "ゲーム業界", "VA": "3.69#5.47"}]}
+{"ID": "finance_aspect_va_dev_81", "Aspect_VA": [{"Aspect": "海外事業セグメント", "VA": "5.93#5.19"}]}
+{"ID": "finance_aspect_va_dev_82", "Aspect_VA": [{"Aspect": "資金利益", "VA": "6.12#5.41"}, {"Aspect": "貸出金利息", "VA": "5.74#4.70"}]}
+{"ID": "finance_aspect_va_dev_83", "Aspect_VA": [{"Aspect": "在宅医療向けレンタル事業", "VA": "5.68#5.14"}, {"Aspect": "売上高", "VA": "4.19#5.34"}, {"Aspect": "セグメント利益", "VA": "5.94#5.41"}]}
+{"ID": "finance_aspect_va_dev_84", "Aspect_VA": [{"Aspect": "コスト", "VA": "5.84#5.14"}]}
+{"ID": "finance_aspect_va_dev_85", "Aspect_VA": [{"Aspect": "建物及び構築物", "VA": "5.92#5.21"}, {"Aspect": "リース投資資産", "VA": "3.80#5.09"}, {"Aspect": "セグメント資産", "VA": "5.88#5.25"}]}
+{"ID": "finance_aspect_va_dev_86", "Aspect_VA": [{"Aspect": "資産合計", "VA": "6.47#5.82"}]}
+{"ID": "finance_aspect_va_dev_87", "Aspect_VA": [{"Aspect": "部品", "VA": "4.28#5.52"}, {"Aspect": "生産性", "VA": "5.48#5.08"}, {"Aspect": "工場操業", "VA": "3.66#5.26"}, {"Aspect": "低収益事業", "VA": "3.97#5.09"}]}
+{"ID": "finance_aspect_va_dev_88", "Aspect_VA": [{"Aspect": "営業利益", "VA": "6.34#5.98"}, {"Aspect": "経常利益", "VA": "5.98#5.50"}, {"Aspect": "連結会計年度", "VA": "3.98#5.09"}]}
+{"ID": "finance_aspect_va_dev_89", "Aspect_VA": [{"Aspect": "エネルギー・原材料価格", "VA": "6.07#5.43"}]}
+{"ID": "finance_aspect_va_dev_90", "Aspect_VA": [{"Aspect": "受注", "VA": "6.03#5.55"}, {"Aspect": "売上", "VA": "5.71#5.07"}, {"Aspect": "高付加価値商品", "VA": "5.84#5.29"}, {"Aspect": "経費", "VA": "5.64#4.88"}, {"Aspect": "販売単価", "VA": "3.87#5.47"}, {"Aspect": "コスト負担", "VA": "6.20#5.65"}]}
+{"ID": "finance_aspect_va_dev_91", "Aspect_VA": [{"Aspect": "営業収益", "VA": "3.95#5.43"}, {"Aspect": "セグメント利益", "VA": "5.77#4.93"}]}
+{"ID": "finance_aspect_va_dev_92", "Aspect_VA": [{"Aspect": "経常利益", "VA": "5.98#5.78"}]}
+{"ID": "finance_aspect_va_dev_93", "Aspect_VA": [{"Aspect": "靴・袋物部門", "VA": "6.14#5.52"}]}
+{"ID": "finance_aspect_va_dev_94", "Aspect_VA": [{"Aspect": "会員数", "VA": "3.73#5.40"}, {"Aspect": "Purple Carrot", "VA": "5.88#5.44"}, {"Aspect": "らでぃっしゅぼーや", "VA": "5.71#4.78"}, {"Aspect": "大地を守る会", "VA": "4.39#5.64"}, {"Aspect": "Oisix", "VA": "3.64#5.49"}]}
+{"ID": "finance_aspect_va_dev_95", "Aspect_VA": [{"Aspect": "営業経費", "VA": "3.96#5.07"}, {"Aspect": "経常費用", "VA": "5.66#5.34"}]}
+{"ID": "finance_aspect_va_dev_96", "Aspect_VA": [{"Aspect": "エレクトロニクス分野", "VA": "6.39#6.07"}, {"Aspect": "ライフサイエンス分野", "VA": "6.16#5.53"}, {"Aspect": "フイルム", "VA": "5.67#5.32"}]}
+{"ID": "finance_aspect_va_dev_97", "Aspect_VA": [{"Aspect": "売上高", "VA": "5.69#5.09"}, {"Aspect": "受注", "VA": "3.86#5.27"}]}
+{"ID": "finance_aspect_va_dev_98", "Aspect_VA": [{"Aspect": "輸出", "VA": "5.38#5.41"}, {"Aspect": "広告・サービス", "VA": "5.97#4.88"}]}
+{"ID": "finance_aspect_va_dev_99", "Aspect_VA": [{"Aspect": "原料価格", "VA": "4.04#5.37"}, {"Aspect": "繊維系統", "VA": "3.80#5.30"}]}
+{"ID": "finance_aspect_va_dev_100", "Aspect_VA": [{"Aspect": "工具", "VA": "5.19#5.39"}, {"Aspect": "備品", "VA": "5.77#5.05"}, {"Aspect": "器具", "VA": "5.77#5.12"}]}
+{"ID": "finance_aspect_va_dev_101", "Aspect_VA": [{"Aspect": "当連結会計", "VA": "5.99#5.43"}]}
+{"ID": "finance_aspect_va_dev_102", "Aspect_VA": [{"Aspect": "投資利益", "VA": "5.87#4.71"}]}
+{"ID": "finance_aspect_va_dev_103", "Aspect_VA": [{"Aspect": "当社グループの事業", "VA": "5.81#5.10"}]}
+{"ID": "finance_aspect_va_dev_104", "Aspect_VA": [{"Aspect": "事業全体", "VA": "6.06#5.32"}, {"Aspect": "セグメント利益", "VA": "4.72#5.53"}]}
+{"ID": "finance_aspect_va_dev_105", "Aspect_VA": [{"Aspect": "セグメント資産", "VA": "6.05#5.61"}, {"Aspect": "製品", "VA": "5.84#5.50"}, {"Aspect": "商品", "VA": "4.06#5.39"}]}
+{"ID": "finance_aspect_va_dev_106", "Aspect_VA": [{"Aspect": "仕入単価", "VA": "3.35#5.42"}, {"Aspect": "人件費", "VA": "6.06#5.44"}, {"Aspect": "高付加価値商品", "VA": "3.85#5.21"}, {"Aspect": "収益面", "VA": "4.10#5.32"}]}
+{"ID": "finance_aspect_va_dev_107", "Aspect_VA": [{"Aspect": "経常利益", "VA": "5.79#5.21"}]}
+{"ID": "finance_aspect_va_dev_108", "Aspect_VA": [{"Aspect": "リサイクル事業", "VA": "5.50#4.92"}]}
+{"ID": "finance_aspect_va_dev_109", "Aspect_VA": [{"Aspect": "事務機器関連向け製品", "VA": "4.34#5.43"}, {"Aspect": "樹脂関連事業の売上高", "VA": "3.11#5.99"}, {"Aspect": "セグメント利益", "VA": "4.13#5.55"}]}
+{"ID": "finance_aspect_va_dev_110", "Aspect_VA": [{"Aspect": "営業外費用", "VA": "4.11#5.20"}]}
+{"ID": "finance_aspect_va_dev_111", "Aspect_VA": [{"Aspect": "国内業務部門", "VA": "5.66#5.18"}, {"Aspect": "資金運用収益", "VA": "3.60#5.29"}]}
+{"ID": "finance_aspect_va_dev_112", "Aspect_VA": [{"Aspect": "景品販売", "VA": "5.96#5.32"}]}
+{"ID": "finance_aspect_va_dev_113", "Aspect_VA": [{"Aspect": "事業活動", "VA": "3.90#5.63"}]}
+{"ID": "finance_aspect_va_dev_114", "Aspect_VA": [{"Aspect": "コンビニエンスストア向け調理器具", "VA": "5.87#5.33"}]}
+{"ID": "finance_aspect_va_dev_115", "Aspect_VA": [{"Aspect": "インバウンド客", "VA": "5.77#5.38"}, {"Aspect": "一般旅客自動車運送事業", "VA": "6.18#5.38"}, {"Aspect": "索道事業", "VA": "5.80#4.90"}]}
+{"ID": "finance_aspect_va_dev_116", "Aspect_VA": [{"Aspect": "セグメント利益", "VA": "3.84#5.27"}]}
+{"ID": "finance_aspect_va_dev_117", "Aspect_VA": [{"Aspect": "利益剰余金", "VA": "5.53#5.53"}]}
+{"ID": "finance_aspect_va_dev_118", "Aspect_VA": [{"Aspect": "利益剰余金", "VA": "6.13#5.41"}]}
+{"ID": "finance_aspect_va_dev_119", "Aspect_VA": [{"Aspect": "一般管理費", "VA": "5.65#5.28"}, {"Aspect": "販売費", "VA": "3.85#5.44"}, {"Aspect": "売上原価", "VA": "5.75#5.36"}]}
+{"ID": "finance_aspect_va_dev_120", "Aspect_VA": [{"Aspect": "当期純利益", "VA": "6.08#5.56"}]}
+{"ID": "finance_aspect_va_dev_121", "Aspect_VA": [{"Aspect": "利益", "VA": "6.48#5.84"}]}
+{"ID": "finance_aspect_va_dev_122", "Aspect_VA": [{"Aspect": "海外事業", "VA": "3.65#5.54"}]}
+{"ID": "finance_aspect_va_dev_123", "Aspect_VA": [{"Aspect": "店頭販売", "VA": "5.09#5.59"}]}
+{"ID": "finance_aspect_va_dev_124", "Aspect_VA": [{"Aspect": "資金", "VA": "5.47#5.28"}]}
+{"ID": "finance_aspect_va_dev_125", "Aspect_VA": [{"Aspect": "流動資産", "VA": "4.08#5.05"}]}
+{"ID": "finance_aspect_va_dev_126", "Aspect_VA": [{"Aspect": "当事業", "VA": "5.71#5.32"}]}
+{"ID": "finance_aspect_va_dev_127", "Aspect_VA": [{"Aspect": "契約負債", "VA": "3.35#5.52"}]}
+{"ID": "finance_aspect_va_dev_128", "Aspect_VA": [{"Aspect": "営業経費", "VA": "3.94#5.36"}, {"Aspect": "物件費", "VA": "5.91#5.40"}]}
+{"ID": "finance_aspect_va_dev_129", "Aspect_VA": [{"Aspect": "総資産", "VA": "3.99#5.15"}]}
+{"ID": "finance_aspect_va_dev_130", "Aspect_VA": [{"Aspect": "売上高", "VA": "5.74#5.13"}]}
+{"ID": "finance_aspect_va_dev_131", "Aspect_VA": [{"Aspect": "営業損益", "VA": "5.76#5.25"}]}
+{"ID": "finance_aspect_va_dev_132", "Aspect_VA": [{"Aspect": "特別利益", "VA": "6.36#5.45"}]}
+{"ID": "finance_aspect_va_dev_133", "Aspect_VA": [{"Aspect": "経常利益", "VA": "5.63#5.37"}]}
+{"ID": "finance_aspect_va_dev_134", "Aspect_VA": [{"Aspect": "固定資産の残高", "VA": "3.90#5.34"}]}
+{"ID": "finance_aspect_va_dev_135", "Aspect_VA": [{"Aspect": "当期純利益", "VA": "5.76#5.41"}]}
+{"ID": "finance_aspect_va_dev_136", "Aspect_VA": [{"Aspect": "人件費", "VA": "4.32#5.19"}, {"Aspect": "先行費用", "VA": "6.65#6.00"}, {"Aspect": "原材料価格", "VA": "5.46#5.05"}, {"Aspect": "メディカルサプライ事業", "VA": "5.94#5.35"}, {"Aspect": "整形外科ディーラーの業績", "VA": "5.81#5.21"}]}
+{"ID": "finance_aspect_va_dev_137", "Aspect_VA": [{"Aspect": "国内経済", "VA": "5.75#5.27"}, {"Aspect": "国内消費", "VA": "4.27#5.64"}, {"Aspect": "物価", "VA": "5.84#5.40"}]}
+{"ID": "finance_aspect_va_dev_138", "Aspect_VA": [{"Aspect": "海外売上高", "VA": "5.70#5.17"}]}
+{"ID": "finance_aspect_va_dev_139", "Aspect_VA": [{"Aspect": "営業費用", "VA": "5.77#5.04"}]}
+{"ID": "finance_aspect_va_dev_140", "Aspect_VA": [{"Aspect": "国内建築", "VA": "3.76#5.31"}]}
+{"ID": "finance_aspect_va_dev_141", "Aspect_VA": [{"Aspect": "売上債権", "VA": "6.43#5.80"}, {"Aspect": "契約資産", "VA": "3.45#5.43"}]}
+{"ID": "finance_aspect_va_dev_142", "Aspect_VA": [{"Aspect": "当セグメントの利益", "VA": "5.94#5.54"}]}
+{"ID": "finance_aspect_va_dev_143", "Aspect_VA": [{"Aspect": "ＡＴ事業", "VA": "5.54#5.12"}]}
+{"ID": "finance_aspect_va_dev_144", "Aspect_VA": [{"Aspect": "タイ", "VA": "3.71#5.24"}]}
+{"ID": "finance_aspect_va_dev_145", "Aspect_VA": [{"Aspect": "当社グループ", "VA": "3.88#5.39"}]}
+{"ID": "finance_aspect_va_dev_146", "Aspect_VA": [{"Aspect": "債券", "VA": "5.89#5.33"}, {"Aspect": "手数料全体", "VA": "5.86#5.19"}]}
+{"ID": "finance_aspect_va_dev_147", "Aspect_VA": [{"Aspect": "鋼製型枠パネル", "VA": "5.55#4.93"}]}
+{"ID": "finance_aspect_va_dev_148", "Aspect_VA": [{"Aspect": "卸売事業", "VA": "3.84#5.17"}]}
+{"ID": "finance_aspect_va_dev_149", "Aspect_VA": [{"Aspect": "投資有価証券", "VA": "6.26#5.49"}]}
+{"ID": "finance_aspect_va_dev_150", "Aspect_VA": [{"Aspect": "減価償却費", "VA": "3.50#5.44"}, {"Aspect": "未払消費税", "VA": "3.75#5.57"}]}
+{"ID": "finance_aspect_va_dev_151", "Aspect_VA": [{"Aspect": "デジタルプロダクツ", "VA": "5.75#5.23"}]}
+{"ID": "finance_aspect_va_dev_152", "Aspect_VA": [{"Aspect": "キーストーンナチュラルホールディングス社", "VA": "5.65#5.19"}, {"Aspect": "PBF製品", "VA": "5.80#5.47"}]}
+{"ID": "finance_aspect_va_dev_153", "Aspect_VA": [{"Aspect": "公開買付関連費用", "VA": "5.81#5.35"}, {"Aspect": "当期純利益", "VA": "5.61#5.04"}]}
+{"ID": "finance_aspect_va_dev_154", "Aspect_VA": [{"Aspect": "オンラインストア", "VA": "5.82#5.31"}, {"Aspect": "自社サイト", "VA": "5.27#5.28"}]}
+{"ID": "finance_aspect_va_dev_155", "Aspect_VA": [{"Aspect": "当事業年度の売上高", "VA": "5.86#5.37"}]}
+{"ID": "finance_aspect_va_dev_156", "Aspect_VA": [{"Aspect": "北米", "VA": "3.34#5.75"}, {"Aspect": "台湾", "VA": "6.31#5.45"}, {"Aspect": "中国", "VA": "5.97#5.42"}, {"Aspect": "インドネシア", "VA": "5.72#5.34"}]}
+{"ID": "finance_aspect_va_dev_157", "Aspect_VA": [{"Aspect": "校舎運営費用", "VA": "5.94#5.15"}, {"Aspect": "人件費", "VA": "5.84#5.15"}, {"Aspect": "私立対策", "VA": "3.63#5.55"}]}
+{"ID": "finance_aspect_va_dev_158", "Aspect_VA": [{"Aspect": "経常収益", "VA": "5.82#5.11"}]}
+{"ID": "finance_aspect_va_dev_159", "Aspect_VA": [{"Aspect": "設備投資", "VA": "3.65#5.47"}]}
+{"ID": "finance_aspect_va_dev_160", "Aspect_VA": [{"Aspect": "定量目標", "VA": "5.85#5.30"}]}
+{"ID": "finance_aspect_va_dev_161", "Aspect_VA": [{"Aspect": "当期純利益", "VA": "6.43#5.73"}]}
+{"ID": "finance_aspect_va_dev_162", "Aspect_VA": [{"Aspect": "当期純利益", "VA": "5.78#5.00"}]}
+{"ID": "finance_aspect_va_dev_163", "Aspect_VA": [{"Aspect": "その他の資産", "VA": "6.08#5.23"}]}
+{"ID": "finance_aspect_va_dev_164", "Aspect_VA": [{"Aspect": "サラリーローン", "VA": "5.80#5.29"}, {"Aspect": "住宅ローン", "VA": "3.83#5.27"}, {"Aspect": "法人向けの事業", "VA": "5.70#5.13"}]}
+{"ID": "finance_aspect_va_dev_165", "Aspect_VA": [{"Aspect": "コスト", "VA": "4.36#4.94"}]}
+{"ID": "finance_aspect_va_dev_166", "Aspect_VA": [{"Aspect": "営業利益", "VA": "6.02#5.18"}]}
+{"ID": "finance_aspect_va_dev_167", "Aspect_VA": [{"Aspect": "国内市場", "VA": "3.82#5.28"}, {"Aspect": "市場", "VA": "4.68#5.72"}]}
+{"ID": "finance_aspect_va_dev_168", "Aspect_VA": [{"Aspect": "事業領域", "VA": "5.64#5.25"}, {"Aspect": "当社", "VA": "3.02#5.70"}]}
+{"ID": "finance_aspect_va_dev_169", "Aspect_VA": [{"Aspect": "収益性", "VA": "5.91#5.24"}, {"Aspect": "在庫回転率", "VA": "5.16#5.39"}]}
+{"ID": "finance_aspect_va_dev_170", "Aspect_VA": [{"Aspect": "観光", "VA": "5.70#5.26"}, {"Aspect": "全ての事業", "VA": "5.68#5.14"}]}
+{"ID": "finance_aspect_va_dev_171", "Aspect_VA": [{"Aspect": "負債", "VA": "5.59#5.36"}]}
+{"ID": "finance_aspect_va_dev_172", "Aspect_VA": [{"Aspect": "人工骨頭挿入術（BHA）", "VA": "6.62#5.89"}, {"Aspect": "人工関節分野", "VA": "4.14#5.24"}, {"Aspect": "BHA全体", "VA": "2.84#5.84"}]}
+{"ID": "finance_aspect_va_dev_173", "Aspect_VA": [{"Aspect": "契約負債", "VA": "5.81#5.24"}]}
+{"ID": "finance_aspect_va_dev_174", "Aspect_VA": [{"Aspect": "株式数", "VA": "5.95#5.30"}]}
+{"ID": "finance_aspect_va_dev_175", "Aspect_VA": [{"Aspect": "自己株式", "VA": "4.02#5.12"}]}
+{"ID": "finance_aspect_va_dev_176", "Aspect_VA": [{"Aspect": "契約資産", "VA": "3.70#5.36"}]}
+{"ID": "finance_aspect_va_dev_177", "Aspect_VA": [{"Aspect": "ウェディングマーケット", "VA": "5.55#4.99"}]}
+{"ID": "finance_aspect_va_dev_178", "Aspect_VA": [{"Aspect": "鉄道事業", "VA": "3.39#5.62"}]}
+{"ID": "finance_aspect_va_dev_179", "Aspect_VA": [{"Aspect": "本支管延長数", "VA": "4.26#5.28"}]}
+{"ID": "finance_aspect_va_dev_180", "Aspect_VA": [{"Aspect": "市場環境", "VA": "3.53#5.22"}]}
+{"ID": "finance_aspect_va_dev_181", "Aspect_VA": [{"Aspect": "営業利益", "VA": "6.00#5.33"}, {"Aspect": "税引前利益", "VA": "5.71#5.29"}, {"Aspect": "売上収益", "VA": "5.83#5.08"}]}
+{"ID": "finance_aspect_va_dev_182", "Aspect_VA": [{"Aspect": "現金", "VA": "5.09#5.36"}, {"Aspect": "現金同等物", "VA": "5.64#4.97"}]}
+{"ID": "finance_aspect_va_dev_183", "Aspect_VA": [{"Aspect": "市販用冷凍食品", "VA": "5.61#5.02"}, {"Aspect": "収益", "VA": "3.93#5.21"}]}
+{"ID": "finance_aspect_va_dev_184", "Aspect_VA": [{"Aspect": "対売上高販管費率", "VA": "3.58#5.54"}]}
+{"ID": "finance_aspect_va_dev_185", "Aspect_VA": [{"Aspect": "資本の増減", "VA": "5.80#5.00"}]}
+{"ID": "finance_aspect_va_dev_186", "Aspect_VA": [{"Aspect": "物流・人件費", "VA": "5.91#5.34"}, {"Aspect": "エネルギー価格", "VA": "5.58#4.73"}, {"Aspect": "企業活動", "VA": "6.07#5.55"}]}
+{"ID": "finance_aspect_va_dev_187", "Aspect_VA": [{"Aspect": "不良債権処理額", "VA": "3.82#5.37"}]}
+{"ID": "finance_aspect_va_dev_188", "Aspect_VA": [{"Aspect": "その他地域", "VA": "5.88#5.29"}, {"Aspect": "システム会社全体", "VA": "4.30#5.07"}, {"Aspect": "都市部", "VA": "4.09#5.31"}]}
+{"ID": "finance_aspect_va_dev_189", "Aspect_VA": [{"Aspect": "コストダウン", "VA": "3.63#5.32"}]}
+{"ID": "finance_aspect_va_dev_190", "Aspect_VA": [{"Aspect": "特別損失", "VA": "5.60#5.02"}, {"Aspect": "特別利益", "VA": "3.67#5.64"}]}
+{"ID": "finance_aspect_va_dev_191", "Aspect_VA": [{"Aspect": "売上高", "VA": "5.80#5.34"}]}
+{"ID": "finance_aspect_va_dev_192", "Aspect_VA": [{"Aspect": "売上高", "VA": "5.93#5.36"}]}
+{"ID": "finance_aspect_va_dev_193", "Aspect_VA": [{"Aspect": "資金", "VA": "5.77#4.59"}]}
+{"ID": "finance_aspect_va_dev_194", "Aspect_VA": [{"Aspect": "欧米", "VA": "3.58#5.46"}, {"Aspect": "中国経済", "VA": "6.25#5.55"}]}
+{"ID": "finance_aspect_va_dev_195", "Aspect_VA": [{"Aspect": "売上高", "VA": "6.39#5.72"}]}
+{"ID": "finance_aspect_va_dev_196", "Aspect_VA": [{"Aspect": "新作タイトル", "VA": "5.61#4.80"}]}
+{"ID": "finance_aspect_va_dev_197", "Aspect_VA": [{"Aspect": "経常利益", "VA": "4.23#5.33"}]}
+{"ID": "finance_aspect_va_dev_198", "Aspect_VA": [{"Aspect": "フッ素樹脂特殊タンク製品", "VA": "5.84#5.40"}]}
+{"ID": "finance_aspect_va_dev_199", "Aspect_VA": [{"Aspect": "プチッとうどん", "VA": "5.66#5.34"}]}
+{"ID": "finance_aspect_va_dev_200", "Aspect_VA": [{"Aspect": "ＥＶ市場", "VA": "5.88#5.39"}]}
