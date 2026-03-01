@@ -495,15 +495,14 @@ def mian_infer():
 
     os.makedirs(jsonl_path, exist_ok=True)
 
-    for lang, predict_df in predict_dfs:
-        pred_dataset = VADataset(predict_df, tokenizer, tok_max_len)
-        pred_loader = DataLoader(pred_dataset, batch_size=batchsize, shuffle=True)
-        pred_v, pred_a, = get_prd(model, pred_loader, type="pred")
+    pred_dataset = VADataset(predict_df, tokenizer, tok_max_len)
+    pred_loader = DataLoader(pred_dataset, batch_size=batchsize, shuffle=True)
+    pred_v, pred_a, = get_prd(model, pred_loader, type="pred")
 
-        predict_df["Valence"] = pred_v
-        predict_df["Arousal"] = pred_a
+    predict_df["Valence"] = pred_v
+    predict_df["Arousal"] = pred_a
 
-        df_to_jsonl(predict_df, jsonl_path + f"pred_{lang}_{domain}.jsonl")
+    df_to_jsonl(predict_df, jsonl_path + f"pred_{lang}_{domain}.jsonl")
 
 # main():
 # TODO may need to put lang before domain
@@ -511,6 +510,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('train_or_infer', default="infer")
 # change what domain you want
 parser.add_argument('domain', nargs='?', default="laptop")
+parser.add_argument('lang', nargs='?', default="eng")
 parser.add_argument('-b', type=int, default="8")
 parser.add_argument('--model-name', default="jhu-clsp/mmBERT-base")  # TODO rename to follow api
 # unsloth: use 2e-4 if the data is small
@@ -525,12 +525,14 @@ assert args.train_or_infer in ("train", "infer")
 task = 1
 early_stop = args.early_stop
 domain = args.domain
+lang = args.lang
 assert domain in domainLangs.keys()
+assert lang in lang_domain.keys()  # FIXME refactor to set
 # model config
 model_name = args.model_name
 # choose your encoding model
 assert model_name in (*ms_model, *hf_model)
-save_model_path = f"./models/{domain}/{model_name}"
+save_model_path = f"./models/{domain}_{lang}/{model_name}"
 if args.train_or_infer == "train":
     if model_name in hf_model:
         model_path = model_name
@@ -561,17 +563,16 @@ jsonl_path = f"./outputs/{model_name}/subtask_1/"
 
 # FIXME would the model being too small to fit all train data?
 # TODO split these logic to their main?
-train_urls = [f"{PREFIX}/subtask_1/{lang}/{lang}_{domain}_train_alltasks.jsonl" for lang in domainLangs[domain]]
-# train_urls = [f"{PREFIX}/subtask_1/{lang}/{lang}_{domain}_train_alltasks.jsonl" for domain in lang_domain[lang]]
-train_raws = [load_jsonl(x) for x in train_urls]
-train_df = pd.concat((jsonl_to_df(x) for x in train_raws))
+train_url = f"{PREFIX}/subtask_1/{lang}/{lang}_{domain}_train_alltasks.jsonl"
+train_raw = load_jsonl(train_url)
+train_df = jsonl_to_df(train_raw)
 # split 10% for dev
 train_df, dev_df = train_test_split(train_df, test_size=0.1, random_state=42)
 
 # for one domain do all lang pred
-predict_urls = [ (lang, f"{PREFIX}/subtask_1/{lang}/{lang}_{domain}_dev_task{task}.jsonl") for lang in domainLangs[domain] ]
-predict_raws = [ (x, load_jsonl(url)) for (x, url) in predict_urls ]
-predict_dfs = [ (x, jsonl_to_df(raw)) for (x, raw) in predict_raws ]
+predict_url = f"{PREFIX}/subtask_1/{lang}/{lang}_{domain}_dev_task{task}.jsonl"
+predict_raw = load_jsonl(predict_url)
+predict_df = jsonl_to_df(predict_raw)
 
 
 # ### Display the dataframe
@@ -585,8 +586,7 @@ display(Markdown(f"### subtask_1_lang_{domain} dev_df"))
 display(dev_df.head())
 
 display(Markdown(f"### subtask_1_lang_{domain} predict_df"))
-for _, prd_df in predict_dfs:
-    display(prd_df.head())
+display(predict_df.head())
 
 if args.train_or_infer == "train":
     mian_train()
