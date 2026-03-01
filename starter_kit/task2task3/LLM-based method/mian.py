@@ -28,7 +28,7 @@ parser.add_argument('--task', type=int, default=2)
 parser.add_argument('--resume', type=bool, default=False)
 parser.add_argument('-p', type=float, default=0.8)
 parser.add_argument('-k', type=int, default=20)
-parser.add_argument('--temp', type=float, default=0.7)
+parser.add_argument('--temp', type=float, default=0.1)
 args = parser.parse_args()
 
 assert args.train_or_infer in ("train", "infer")
@@ -37,7 +37,7 @@ assert args.task in (1, 2, 3)  # TODO support task1
 # you can change the model here
 if args.train_or_infer == "train":
     if args.model_type == "gemma-3":
-        model_id = "unsloth/gemma-3-12b-it-unsloth-bnb-4bit"
+        model_id = "unsloth/gemma-3-27b-it-unsloth-bnb-4bit"
     elif args.model_type == "qwen-3":
         model_id = "Qwen/Qwen3-4B-Instruct-2507"
 elif args.train_or_infer == "infer":
@@ -49,7 +49,8 @@ def train(model_id, model_type, lr, task, domain, *, resume=False):
     print(f"{model_id=}, {model_type=}, {lr=}, {task=}, {domain=}, {resume=}")
 
     lora_ckpt_path = './Lora/{}/{}_{}'.format(model_type, task, domain)
-    train_urls = [f"{PREFIX}/subtask_{task}/{lang}/{lang}_{domain}_train_alltasks.jsonl" for lang in DOMAIN_LANG[domain]]
+    train_urls = [f"{PREFIX}/subtask_{task}/{lang}/{lang}_{domain}_train_alltasks.jsonl" for lang in DOMAIN_LANG[domain]] + \
+                     [f"{PREFIX}/subtask_3/{lang}/{lang}_{domain}_dev_task3.jsonl" for lang in DOMAIN_LANG[domain]]
 
     # load train data from url
     dataset = load_dataset("json", data_files=train_urls)
@@ -102,8 +103,8 @@ def train(model_id, model_type, lr, task, domain, *, resume=False):
         eval_dataset = None, # Can set up evaluation!
         args = SFTConfig(
             dataset_text_field = "text",
-            per_device_train_batch_size = 1,
-            gradient_accumulation_steps = 8, # Use GA to mimic batch size!
+            per_device_train_batch_size = 2,
+            gradient_accumulation_steps = 4, # Use GA to mimic batch size!
             warmup_steps = 5,
             num_train_epochs = 2, #
             learning_rate = lr, # Reduce to 2e-5 for long training runs
@@ -153,7 +154,7 @@ def infer(model_id, model_type, task, domain, lang, top_p, top_k, temp):
         key = "Quadruplet"
     else: raise ValueError("not supported task")
 
-    predict_url = f"{PREFIX}/subtask_{task}/{lang}/{lang}_{domain}_dev_task{task}.jsonl"
+    predict_url = f"{PREFIX}/subtask_{task}/{lang}/{lang}_{domain}_test_task{task}.jsonl"
 
     # load dev json to predict
     predict_dataset = load_dataset("json", data_files=predict_url)
