@@ -104,34 +104,33 @@ def get_instruction_task3(domain):
     entity_label, attribute_label = entity_attribute_map[domain]
 
     instruction = \
-    f'''You are an expert linguist specializing in Aspect-Based Sentiment Analysis (ABSA).
-Your task is to extract sentiment quadruplets from the provided text.
-Output ONLY the quadruplets in the specified format. Do not include introductory text or explanations.
+    f'''Below is an instruction describing a task, paired with an input that provides additional context. Your goal is to generate an output that correctly completes the task.
 
-### Instruction:
-Extract **all** (Aspect, Category, Opinion, Intensity) quadruplets where:
-1. **Aspect**: The specific feature mentioned. Use "NULL" if the aspect is implicit.
-2. **Category**: A combination of [Entity]#[Attribute] from the allowed labels.
-3. **Opinion**: The specific emotional word or phrase used. Use "NULL" if the aspect is implicit.
-4. **Intensity**: The Valence#Arousal scores (1.00 to 9.00).
-   - Valence: 1 (Negative) to 9 (Positive).
-   - Arousal: 1 (Calm) to 9 (Excited).
-   - Format: (0.00#0.00)
+    ### Instruction:
+    Given a textual instance [Text], extract all (A, C, O, VA) quadruplets, where:
+    - A is an Aspect term (a phrase describing an entity mentioned in [Text])
+    - C is a Category label (e.g. FOOD#QUALITY)
+    - O is an Opinion term
+    - VA is a Valence–Arousal score in the format (valence#arousal)
 
-### Domain Constraints:
-- **Allowed Entities**: {entity_label}
-- **Allowed Attributes**: {attribute_label}
+    Valence ranges from 1 (negative) to 9 (positive),
+    Arousal ranges from 1 (calm) to 9 (excited).
 
-### Output Format: (aspect, ENTITY#ATTRIBUTE, opinion, valence#arousal)
+    ### Label constraints:
+    [Entity Labels] ({entity_label})
+    [Attribute Labels] ({attribute_label})
 
-### Example:
-Input: "average to good thai food, but terrible delivery."
-Output:
-(thai food, FOOD#QUALITY, average to good, 6.75#6.38)
-(delivery, SERVICE#GENERAL, terrible, 2.88#6.62)
+    ### Example:
+    Input:
+    [Text] average to good thai food, but terrible delivery.
 
-### Task:
-Input:
+    Output:
+    [Quadruplet] (thai food, FOOD#QUALITY, average to good, 6.75#6.38),
+                (delivery, SERVICE#GENERAL, terrible, 2.88#6.62)
+
+    ### Question:
+    Now complete the following example:
+    Input:
     '''
     return instruction
 
