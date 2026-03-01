@@ -79,7 +79,6 @@ import re
 import math
 import argparse
 import os
-import itertools
 
 PREFIX = "../../task-dataset/track_a"
 MODEL_PREFIX = os.path.expanduser("~/.cache/modelscope/hub/models/")
@@ -443,6 +442,8 @@ def mian_train():
             lowest_rmseva = eval_score["RMSE_VA"]
             best_epoch = epoch
             print("this is best")
+            return 1
+        return 0
 
     base_model = AutoModel.from_pretrained(model_path)
     model = TransformerVARegressor(base_model).to(device)
@@ -466,7 +467,7 @@ def mian_train():
         print(f"model: {model_name} Epoch: {epoch+1}: train={train_loss:.4f}")
         val_loss = eval_epoch(model, dev_loader, loss_fn)
         print(f"model: {model_name} Epoch: {epoch+1}: val={val_loss:.4f}")
-        _get_prd_dev(epoch=epoch)
+        if not _get_prd_dev(epoch=epoch) and early_stop: break
 
     base_model.save_pretrained(f"./models/{lang}/{model_name}")
     tokenizer.save_pretrained(f"./models/{lang}/{model_name}")
@@ -496,16 +497,19 @@ parser.add_argument('train_or_infer', default="infer")
 # parser.add_argument('domain', nargs='?', default="laptop")
 # change the language you want to test
 parser.add_argument('lang', nargs='?', default="jpn")
+parser.add_argument('-b', type=int, default="8")
 parser.add_argument('--model-name', default="jhu-clsp/mmBERT-base")  # TODO rename to follow api
 # unsloth: use 2e-4 if the data is small
 parser.add_argument('--lr', type=float, default=2e-5)
-parser.add_argument('--epochs', type=int, default=50)
+parser.add_argument('--epochs', type=int, default=10)
 parser.add_argument('--resume', type=bool, default=False)
+parser.add_argument('--early-stop', type=bool, default=False, const=True)
 args = parser.parse_args()
 assert args.train_or_infer in ("train", "infer")
 
 # task config
 task = 1
+early_stop = args.early_stop
 lang = args.lang
 assert lang in lang_domain
 # model config
@@ -524,7 +528,8 @@ elif args.train_or_infer == "infer":  # TODO more elegant way to read saved mode
     model_path = os.path.abspath(f"./models/{lang}/{model_name}")
 lr = args.lr
 epochs = args.epochs
-batchsize = 32
+# FIXME on v100 16g, roberta large can only use batch=8, while bert base can use batch=32
+batchsize = args.b
 tok_max_len = 512
 print(f"{lang=}, {model_path=}")
 print(f"lr: {lr}, epochs: {epochs}, batchsize: {batchsize}")
