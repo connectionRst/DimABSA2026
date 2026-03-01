@@ -205,10 +205,8 @@ predict_df = jsonl_to_df(predict_raw)
 # split 10% for dev
 train_df, dev_df = train_test_split(train_df, test_size=0.1, random_state=42)
 
-# %% [markdown]
 # ### Display the dataframe
 
-# %%
 from IPython.display import display, Markdown
 
 display(Markdown(f"### subtask_1_{lang}_{domain} train_df"))
@@ -338,15 +336,14 @@ class TransformerVARegressor(nn.Module):
         x = self.dropout(cls_output)
         return self.reg_head(x)
 
-
-#TODO refractor to pass tokenizer
+# TODO refractor to pass tokenizer
 def train_epoch(model, dataloader, optimizer, loss_fn):
     model.train()
     total_loss = 0
-    for batch in tqdm(dataloader):
-        input_ids = batch["input_ids"]
-        attn_mask = batch["attention_mask"]
-        labels = batch["labels"]
+    for batch in tqdm(dataloader, miniters = 10):
+        input_ids = batch["input_ids"].to(device)
+        attn_mask = batch["attention_mask"].to(device)
+        labels = batch["labels"].to(device)
 
         optimizer.zero_grad()
         outputs = model(input_ids, attn_mask)
@@ -402,7 +399,7 @@ loss_fn = nn.MSELoss()
 def get_prd(
     model: TransformerVARegressor,
     dataloder,
-    type: Literal["dev"] = "dev"
+    type: Literal["dev"]
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]: ...
 @overload
 def get_prd(
@@ -415,7 +412,7 @@ def get_prd(model: TransformerVARegressor, dataloder, type = "dev"):
     if type == "dev":
         all_preds, all_labels = [], []
         with torch.no_grad():
-            for batch in tqdm(dataloder):
+            for batch in dataloder:
                 input_ids = batch["input_ids"].to(device)
                 attention_mask = batch["attention_mask"].to(device)
                 labels = batch["labels"].cpu().numpy()
@@ -524,32 +521,6 @@ model.save
 #   - Save predictions in JSONL format (`ID`, `Aspect_VA`).
 # - Run the model on the predict sets (laptop & restaurant).
 # - Fill in predicted Valence/Arousal values.
-# - Export three JSONL files:
-#
-#
-#
-#
-#   - `pred_eng_laptop.jsonl`
-#   - `pred_eng_restaurant.jsonl`
-#   - `pred_zho_laptop.jsonl`
-# - These files can be uploaded as the final submission.
-#
-
-# %% [markdown]
-# ### File Naming Guidelines
-# When submitting your predictions on the Codabench task page:
-#
-# Decide the target language(s) and domain(s). Each submission file corresponds to one language-domain combination.
-# For each language-domain combination, name the file pred_[lang_code]_[domain].jsonl, where
-# - [lang_code] represents a 3-letter language code, and
-# - [domain] represents a domain.
-# For example, Hausa predictions for the movie domain should be named pred_hau_movie.jsonl.
-# If submitting for multiple languages or domains, submit one prediction file per language-domain combination. For example, submitting for multiple languages or domains would look like this:
-# ```plaintext
-# subtask_1
-# ├── pred_eng_restaurant.jsonl
-# ├── pred_eng_laptop.jsonl
-# └── pred_zho_laptop.jsonl
 
 # %%
 #==== step 5 save & submit your predict results ====
