@@ -1,77 +1,20 @@
-# %% [markdown]
-# <figure>
-#   <img src="https://raw.githubusercontent.com/shadowkshs/DimABSA2026/refs/heads/main/banner.png" width="100%">
-# </figure>
-
-# %% [markdown]
-# # SemEval-2026 Task 2 & 3 (Track A: DimABSA)
-# # Subtask 2: DimASTE - Dimensional Aspect Sentiment Triplet Extraction
-# # Subtask 3: DimASQE - Dimensional Aspect Sentiment Quadruplets Extraction
-# 
-# -----
-# 
-# ## Starter Notebook
-# LLM-based finetune for Dimensional Aspect Sentiment Triplet (and Quadruplet) Extraction
-# 
-# ## Introduction:
-# 
-# You are welcome to participate in our SemEval Shared Task!
-# 
-# In this starter notebook, we guide you through the process of fine-tuning a pre-trained language model on sample training data to build a dimensional sentiment extraction model.  
-# This notebook is adapted from a HuggingFace-style implementation for similar tasks.
-# 
-# ### Outline:
-# - Installation and importation of necessary libraries Setting up the project parameters. Running training and evaluation Before you start:
-# 
-# - It is strongly advised that you use a GPU to speed up training. To do this, go to the "Runtime" menu in Colab, select "Change runtime type" and then in the popup menu, choose "GPU" in the "Hardware accelerator" box.
-# 
-# ### NB:
-# - This notebook aims to help you become familiar with fine-tuning language models for dimensional sentiment tasks.  
-# - You are encouraged to extend or modify it to obtain competitive performance.
-# - This notebook will take about 2 to 2.5 hours to run. It may shut down if your Colab GPU quota is insufficient.
-# 
-# ### Languages and Domains:
-# #### Track A: Subtask 2 & 3
-# - eng_restaurant
-# - eng_laptop
-# - jpn_hotel
-# - rus_restaurant
-# - tat_restaurant
-# - ukr_restaurant
-# - zho_restaurant
-# - zho_laptop
-# 
-# ### Model:
-# This Starter Notebook uses the Qwen3-4B-Instruct pretrained language model, adapted through Unsloth for efficient fine-tuning.
-# 
-# The model is a multilingual decoder-based LLM with strong instruction-following ability, and it is provided in bnb 4-bit quantized form, allowing training on limited GPU resources such as Google Colab.
-# 
-# You can find the model here:
-# https://huggingface.co/unsloth/Qwen3-4B-Instruct-2507-bnb-4bit
-# 
-# If you need alternative models (e.g., larger Qwen variants, or other multilingual LLMs), you may explore them on Hugging Face:
-# https://huggingface.co/unsloth/models
-
-# %% [markdown]
 # ### Step 1: Install unsloth package
-
-# %%
-pass
-
-# %% [markdown]
 # ### Step 2: Load the competition data
+# ### Step 3: Design prompt template
 
-# %%
-import os
-import re
-import json
 from datasets import load_dataset
 
+import os
+import sys
 
-_PREFIX = "../../../task-dataset/track_a"
-_MODEL_TYPES = ("gemma3", "qwen3")
+os.environ["UNSLOTH_USE_MODELSCOPE"] = "1"
+PREFIX = "../../../task-dataset/track_a"
+MODEL_TYPES = ("gemma3", "qwen3")
 
 # task config
+try: domain = sys.argv[1]
+except: domain = "laptop" # change what domain you want to test
+
 lr = 2e-4  # unsloth: use 2e-4 if the data is small
 subtask = "subtask_2" # subtask_2 or subtask_3
 task = "task2" # task2 or task3
@@ -80,31 +23,20 @@ domain_lang = {
     "restaurant": ["eng", "rus", "tat", "ukr", "zho"],
     "hotel": ["jpn"]
 }
-import sys
-try: domain = sys.argv[1]
-except: domain = "laptop" # change what domain you want to test
 resume_from_ckpt = True
 model_type = "gemma3"
 
-print(f"{domain=},{model_type=},{lr=},{resume_from_ckpt=}")
+print(f"{domain=}, {model_type=}, {lr=}, {resume_from_ckpt=}")
 
+train_urls = [f"{PREFIX}/{subtask}/{lang}/{lang}_{domain}_train_alltasks.jsonl" for lang in domain_lang[domain]]
 
-
-train_urls = [f"{_PREFIX}/{subtask}/{lang}/{lang}_{domain}_train_alltasks.jsonl" for lang in domain_lang[domain]]
-
-#load train data from url
+# load train data from url
 dataset = load_dataset("json", data_files=train_urls)
 
-# %% [markdown]
-# ### Display the data info
-
-# %%
+# Display the data info
 print(dataset)
-print(dataset['train'][0])
+print(dataset['train'][0]) # type: ignore
 
-# %% [markdown]
-# ### Step 3: Design prompt template
-# %%
 # task 2 prompt template covert
 if task == "task2":
     instruction = '''Below is an instruction describing a task, paired with an input that provides additional context. Your goal is to generate an output that correctly completes the task.
@@ -220,20 +152,14 @@ elif task == "task3":
             return msg
 
 
-
-# %%
-
-# %% [markdown]
 # ### Step 4: Load the LLM from Hugging Face and apply LoRA for fine-tuning
-# 
-
-# %%
-os.environ["UNSLOTH_USE_MODELSCOPE"] = "1"
 if model_type in ("gemma3"):
     from unsloth import FastModel as FastLanguageModel
 else:
     from unsloth import FastLanguageModel
 from unsloth.chat_templates import get_chat_template
+from unsloth.chat_templates import train_on_responses_only
+
 
 # you can change the model here
 model_id = "unsloth/gemma-3-12b-it-unsloth-bnb-4bit"
@@ -254,17 +180,6 @@ tokenizer = get_chat_template(
 )
 
 # lora setting
-'''
-FastLanguageModel.get_peft_model(
-    model,
-    r = 16,
-    lora_alpha = 16,
-    # lora_dropout = 0.05,
-    lora_dropout = 0,
-    target_modules = ["q_proj", "k_proj", "v_proj", "o_proj"],
-)
-'''
-
 model = FastLanguageModel.get_peft_model(
     model,
     r = 8,
@@ -274,11 +189,11 @@ model = FastLanguageModel.get_peft_model(
 )
 
 # covert dataset to train template
-train_dataset = dataset["train"].map(lambda x: convert(x, tokenizer=tokenizer))
+# FIXME yes, as tokenizer need to be loaded first, this cannot be raised to top
+train_dataset = dataset["train"].map(lambda x: convert(x, tokenizer=tokenizer)) # type: ignore
 
-# %%
 # show your template text
-print(train_dataset[100]["text"])
+print(train_dataset[100]["text"]) # type: ignore
 
 
 # %% [markdown]
@@ -307,7 +222,7 @@ from trl import SFTTrainer, SFTConfig # pyright: ignore[reportPrivateImportUsage
 
 trainer = SFTTrainer(
     model = model,
-    tokenizer = tokenizer,
+    tokenizer = tokenizer, # pyright: ignore[reportCallIssue]
     train_dataset = train_dataset,
     eval_dataset = None, # Can set up evaluation!
     args = SFTConfig(
@@ -329,8 +244,6 @@ trainer = SFTTrainer(
     ),
 )
 
-
-from unsloth.chat_templates import train_on_responses_only
 if model_type in ("gemma3"):
     trainer = train_on_responses_only(
         trainer,
@@ -350,6 +263,3 @@ trainer.train(resume_from_checkpoint=resume_from_ckpt)
 
 model.save_pretrained(f"./Lora/gemma/{task}_{domain}/model")  # Local saving
 tokenizer.save_pretrained(f"./Lora/gemma/{task}_{domain}/model")
-
-# %% [markdown]
-# ### Step 6: Run Inference and Extract Structured Sentiment Outputs
