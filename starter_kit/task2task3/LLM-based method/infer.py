@@ -1,28 +1,24 @@
-# %% [markdown]
-# ### Step 1: Install unsloth package
-
-# %%
-pass
-
-# %% [markdown]
 # ### Step 2: Load the competition data
+# ### Step 3: Design prompt template
 
-# %%
 from tqdm import tqdm
-
-import os
-import re
-import json
 from datasets import load_dataset
 
-# task config
+import os
 import sys
+import re
+import json
+
+os.environ["UNSLOTH_USE_MODELSCOPE"] = "1"
+PREFIX = "../../../task-dataset/track_a"
+MODEL_TYPES = ("qwen3", "gemma3")
+
+# task config
 try: domain = sys.argv[1]
 except: domain = "hotel" #change what domain you want to test
 try: prd_lang = sys.argv[2]
 except: prd_lang = "jpn" #chang the language you want to test
 
-_PREFIX = "../../../task-dataset/track_a"
 subtask = "subtask_2" # subtask_2 or subtask_3
 task = "task2" # task2 or task3
 domain_lang = {
@@ -30,15 +26,19 @@ domain_lang = {
    "restaurant": ["eng", "rus", "tat", "ukr", "zho"],
    "hotel": ["jpn"]
 }
+model_type = "gemma3"
 
-print("domain: {}, lang: {}".format(domain, prd_lang))
+print(f"{domain=}, {prd_lang=}")
 assert prd_lang in domain_lang[domain]
 
-predict_url = f"{_PREFIX}/{subtask}/{prd_lang}/{prd_lang}_{domain}_dev_{task}.jsonl"
+predict_url = f"{PREFIX}/{subtask}/{prd_lang}/{prd_lang}_{domain}_dev_{task}.jsonl"
 
-# %% [markdown]
-# ### Step 3: Design prompt template
-# %%
+# load dev json to predict
+predict_dataset = load_dataset("json", data_files=predict_url)
+
+# Display the data info
+print(predict_dataset["train"][0]) # type: ignore
+
 # task 2 prompt template covert
 if task == "task2":
     instruction = '''Below is an instruction describing a task, paired with an input that provides additional context. Your goal is to generate an output that correctly completes the task.
@@ -117,72 +117,8 @@ elif task == "task3":
     '''
 
 
-
-
-# %%
-#show your template text
-
-# %% [markdown]
-# ### Step 4: Load the LLM from Hugging Face and apply LoRA for fine-tuning
-# 
-
-# %%
-# model_types = ["qwen3", "gemma3"]
-model_type = "gemma3"
-ismoe = True
-if ismoe:
-    from unsloth import FastModel as FastLanguageModel
-else:
-    from unsloth import FastLanguageModel
-
-model_id = f"./Lora/gemma/{task}_{domain}/model"
-
-# tokenizer and model setting
-model, tokenizer = FastLanguageModel.from_pretrained(
-    model_name = model_id,
-    max_seq_length = 512, # DimASBA Task usually less then 512 tokens.
-    # load_in_16bit = True,  # gemma not support 16bit
-    # device_map = "balanced",
-    local_files_only = True
-)
-
-#FIXME
-from unsloth.chat_templates import get_chat_template
-tokenizer = get_chat_template(
-    tokenizer,
-    chat_template = "gemma-3",
-)
-
-FastLanguageModel.for_inference(model)
-
-# %% [markdown]
-# ### Step 6: Run Inference and Extract Structured Sentiment Outputs
-
-# %%
-# load dev json to predict
-predict_dataset = load_dataset("json", data_files=predict_url)
-
-# Display the data info
-print(predict_dataset["train"][0])
-
-# convert text to prompt
-def format_dataset(x, *, model_type = "qwen3"):
-    text = x["Text"]
-    final_prompt = instruction + '[Text] ' + text + '\n\nOutput:'
-    if model_type == "qwen3":
-        return [
-            {"role": "user", "content": final_prompt}
-        ]
-    elif model_type == "gemma3":
-        return [{
-            "role": "user",
-            "content": [{
-                "type": "text",
-                "text": final_prompt
-            }]
-        }]
-    else:
-        raise ValueError("model_type is invalid")
+# show your template text
+pass
 
 # extract answer
 def extract_answer(text,task):
@@ -213,6 +149,54 @@ def extract_answer(text,task):
     raise ValueError("Invalid task")
 
   return result
+
+# convert text to prompt
+# TODO merge with convert(x, *, tokenizer)
+def format_dataset(x, *, model_type="qwen3"):
+    text = x["Text"]
+    final_prompt = instruction + '[Text] ' + text + '\n\nOutput:'
+    if model_type == "qwen3":
+        return [
+            {"role": "user", "content": final_prompt}
+        ]
+    elif model_type == "gemma3":
+        return [{
+            "role": "user",
+            "content": [{
+                "type": "text",
+                "text": final_prompt
+            }]
+        }]
+    else:
+        raise ValueError("model_type is invalid")
+
+
+# ### Step 4: Load the LLM from Hugging Face and apply LoRA for fine-tuning
+if model_type in ("gemma3"):
+    from unsloth import FastModel as FastLanguageModel
+else:
+    from unsloth import FastLanguageModel
+from unsloth.chat_templates import get_chat_template
+
+model_id = f"./Lora/gemma/{task}_{domain}/model"
+
+# tokenizer and model setting
+model, tokenizer = FastLanguageModel.from_pretrained(
+    model_name = model_id,
+    max_seq_length = 512, # DimASBA Task usually less then 512 tokens.
+    # load_in_16bit = True,  # gemma not support 16bit
+    # device_map = "balanced",
+    local_files_only = True
+)
+
+tokenizer = get_chat_template(
+    tokenizer,
+    chat_template = "gemma-3",
+)
+
+FastLanguageModel.for_inference(model)
+
+# ### Step 6: Run Inference and Extract Structured Sentiment Outputs
 
 # Perform inference
 results = []
@@ -248,12 +232,10 @@ for i, sample in enumerate(tqdm(predict_dataset["train"])):
     results.append(dump_data)
 
 
-# %% [markdown]
 # ### Step 7: Save prediction results
-# %%
+# TODO convert to def?
 import json
 import os
-import zipfile
 
 # resolve output name
 out_name = f"pred_{prd_lang}_{domain}.jsonl"
