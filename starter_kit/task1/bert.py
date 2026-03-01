@@ -81,38 +81,9 @@ import argparse
 import os
 import itertools
 
-
-def load_jsonl(filepath: str) -> List[Dict]:
-    with open(filepath, "r", encoding="utf-8") as f:
-        return [json.loads(line) for line in f]
-
-def load_jsonl_url(url: str) -> List[Dict]:
-    resp = requests.get(url)
-    resp.raise_for_status()
-    return [json.loads(line) for line in resp.text.splitlines()]
-
-# %% [markdown]
-# ### First, visit the [DimABSA2006](https://github.com/DimABSA/DimABSA2026) repository, check the task-dataset.
-
-# %% [markdown]
-# ### Step 1: Load the competition data
-#
-# - Read JSONL files (train/dev/predict) into Colab.
-# - Train files contain Valence–Arousal (VA) labels.
-# - Predict files have no VA labels.
-# - This script:
-#   1. Loads the JSONL data.
-#   2. Splits 10% of train data as dev set.
-#   3. Converts JSONL into DataFrames (ID, Text, Aspect, Valence, Arousal).
-#   4. Prints the first few rows for checking.
-#
-
-# %%
-#task config
 PREFIX = "../../task-dataset/track_a"
-task = "task1"#don't change
-lang = "eng" #chang the language you want to test
-domain = "laptop" #change what domain you want to test
+MODEL_PREFIX = os.path.expanduser("~/.cache/modelscope/hub/models/")
+
 domain_lang = {
     "hotel": ["jpn"],
     "restaurant": ["eng", "rus", "tat", "ukr", "zho"],
@@ -130,45 +101,16 @@ lang_domain = {
     "ukr": ["restaurant"],
 }
 
+def load_jsonl(filepath: str) -> List[Dict]:
+    with open(filepath, "r", encoding="utf-8") as f:
+        return [json.loads(line) for line in f]
 
-# FIXME would the model being too small to fit all train data?
-# train_urls = [f"{PREFIX}/subtask_1/{lang}/{lang}_{domain}_train_alltasks.jsonl" for domain in domain_lang.keys() for lang in domain_lang[domain]]
-train_urls = [f"{PREFIX}/subtask_1/{lang}/{lang}_{domain}_train_alltasks.jsonl" for domain in lang_domain[lang]]
-predict_url = f"{PREFIX}/subtask_1/{lang}/{lang}_{domain}_dev_{task}.jsonl"
+def load_jsonl_url(url: str) -> List[Dict]:
+    resp = requests.get(url)
+    resp.raise_for_status()
+    return [json.loads(line) for line in resp.text.splitlines()]
 
-device = "cuda"
-# model config
-# choose your encoding model
-model_name = "/home/na/.cache/modelscope/hub/models/google-bert/bert-base-multilingual-cased"
-model_name = "/home/na/.cache/modelscope/hub/models/ai-modelscope/roberta-large"
-model_name = "/home/na/.cache/modelscope/hub/models/answerdotai/ModernBERT-large"
-model_name = "/home/na/.cache/modelscope/hub/models/jhu-clsp/mmBERT-base"
-lr = 1e-5 # learning rate
-epochs = 100
-batchsize = 16
-tok_max_len = 512
-print(f"lr: {lr}, epochs: {epochs}, batchsize: {batchsize}")
-
-
-# TODO fp flatten logic
-train_raw = []
-for train_url in train_urls:
-    train_raw += load_jsonl(train_url)
-predict_raw = load_jsonl(predict_url)
-
-# %% [markdown]
-# another transformer models you can try:
-# 1. roberta-large
-# 2. roberta-base
-# 3. bert-base-multilingual-uncased
-#
-# more models please visit [huggingface](https://huggingface.co/models)
-
-# %%
-#==== step 1 load the data ====
-# you can change the env for your task.
-# train data should have the VA labels, predit data without VA labels
-
+# these two func are only used in task1
 def jsonl_to_df(data):
     if 'Quadruplet' in data[0]:
         df = pd.json_normalize(data, 'Quadruplet', ['ID', 'Text'])
@@ -199,24 +141,22 @@ def jsonl_to_df(data):
 
     return df
 
-train_df = jsonl_to_df(train_raw)
-predict_df = jsonl_to_df(predict_raw)
+def df_to_jsonl(df, out_path):
+    df_sorted = df.sort_values(by="ID", key=lambda x: x.map(extract_num))
+    grouped = df_sorted.groupby("ID", sort=False)
 
-# split 10% for dev
-train_df, dev_df = train_test_split(train_df, test_size=0.1, random_state=42)
-
-# ### Display the dataframe
-
-from IPython.display import display, Markdown
-
-display(Markdown(f"### subtask_1_{lang}_{domain} train_df"))
-display(train_df.head())
-
-display(Markdown(f"### subtask_1_{lang}_{domain} dev_df"))
-display(dev_df.head())
-
-display(Markdown(f"### subtask_1_{lang}_{domain} predict_df"))
-display(predict_df.head())
+    with open(out_path, "w", encoding="utf-8") as f:
+        for gid, gdf in grouped:
+            record = {
+                "ID": gid,
+                "Aspect_VA": []
+            }
+            for _, row in gdf.iterrows():
+                record["Aspect_VA"].append({
+                    "Aspect": row["Aspect"],
+                    "VA": f"{row['Valence']:.2f}#{row['Arousal']:.2f}"
+                })
+            f.write(json.dumps(record, ensure_ascii=False) + "\n")
 
 # %% [markdown]
 # ### Step 2: Build Dataset and DataLoader
@@ -270,16 +210,6 @@ class VADataset(Dataset):
             "attention_mask": encoded["attention_mask"].squeeze(0),
             "labels": torch.tensor(self.labels[idx], dtype=torch.float)
         }
-
-# batchsize = locals().get("batchsize", 64)
-# convert to Dataset and Dataloader
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-
-train_dataset = VADataset(train_df, tokenizer, tok_max_len)
-train_loader = DataLoader(train_dataset, batch_size=batchsize, shuffle=True)
-
-dev_dataset = VADataset(dev_df, tokenizer, tok_max_len)
-dev_loader = DataLoader(dev_dataset, batch_size=batchsize, shuffle=True)
 
 
 # %% [markdown]
@@ -367,17 +297,6 @@ def eval_epoch(model, dataloader, loss_fn):
             loss = loss_fn(outputs, labels)
             total_loss += loss.item()
     return total_loss / len(dataloader)
-
-# Training bert on your data
-base_model = AutoModel.from_pretrained(model_name)
-model = TransformerVARegressor(base_model)
-lr = locals().get("lr", 1e-5)
-epochs = locals().get("epochs", 50)
-
-optimizer = torch.optim.AdamW(model.parameters(), lr=lr)
-loss_fn = nn.MSELoss()
-
-# placeholder as train should happen here
 
 
 # %% [markdown]
@@ -491,27 +410,6 @@ def evaluate_predictions_task1(pred_a, pred_v, gold_a, gold_v, is_norm = False):
         'RMSE_VA': rmse_va,
     }
 
-lowest_rmseva = 5; best_epoch = 0
-def _get_prd_dev(*, epoch = 0):
-    # print("get_prd(dev) start")
-    pred_v, pred_a, gold_v, gold_a = get_prd(model, dev_loader, type="dev")
-    eval_score = evaluate_predictions_task1(pred_a, pred_v, gold_a, gold_v)
-    print(f"{model_name} dev_eval: {eval_score}")
-    global lowest_rmseva, best_epoch
-    if (eval_score["RMSE_VA"] < lowest_rmseva):
-        lowest_rmseva = eval_score["RMSE_VA"]
-        best_epoch = epoch
-        print("this is best", f"rmse_va={lowest_rmseva}, epoch={epoch}" if epoch != 0 else "")
-
-
-# okay do benchmark on every epoch
-for epoch in range(epochs):
-    train_loss = train_epoch(model, train_loader, optimizer, loss_fn)
-    val_loss = eval_epoch(model, dev_loader, loss_fn)
-    print(f"model:{model_name} Epoch:{epoch+1}: train={train_loss:.4f}, val={val_loss:.4f}")
-    _get_prd_dev(epoch=epoch)
-
-model.save
 # %% [markdown]
 # ### Step 5: Save and submit prediction results
 #
@@ -528,53 +426,154 @@ def extract_num(s):
     m = re.search(r"(\d+)$", str(s))
     return int(m.group(1)) if m else -1
 
-def df_to_jsonl(df, out_path):
-    df_sorted = df.sort_values(by="ID", key=lambda x: x.map(extract_num))
-    grouped = df_sorted.groupby("ID", sort=False)
-
-    with open(out_path, "w", encoding="utf-8") as f:
-        for gid, gdf in grouped:
-            record = {
-                "ID": gid,
-                "Aspect_VA": []
-            }
-            for _, row in gdf.iterrows():
-                record["Aspect_VA"].append({
-                    "Aspect": row["Aspect"],
-                    "VA": f"{row['Valence']:.2f}#{row['Arousal']:.2f}"
-                })
-            f.write(json.dumps(record, ensure_ascii=False) + "\n")
-
-pred_dataset = VADataset(predict_df, tokenizer, tok_max_len)
-pred_loader = DataLoader(pred_dataset, batch_size=batchsize, shuffle=True)
-pred_v, pred_a, = get_prd(model, pred_loader, type="pred")
-
-predict_df["Valence"] = pred_v
-predict_df["Arousal"] = pred_a
-
-
-df_to_jsonl(predict_df, f"pred_{lang}_{domain}.jsonl")
-
-# %% [markdown]
-# ### Download the submit files
-
 # %%
 
-print("use zip or mkzip.py to pack prd result!")
+# TODO call main function here, not directly implement here
+# Training bert on your data
+def mian_train():
+    lowest_rmseva = 5
+    best_epoch = 0
+    def _get_prd_dev(*, epoch = 0):
+        nonlocal lowest_rmseva, best_epoch
+        # print("get_prd(dev) start")
+        pred_v, pred_a, gold_v, gold_a = get_prd(model, dev_loader, type="dev")
+        eval_score = evaluate_predictions_task1(pred_a, pred_v, gold_a, gold_v)
+        print(f"model: {model_name} dev_eval: {eval_score}")
+        if (eval_score["RMSE_VA"] < lowest_rmseva):
+            lowest_rmseva = eval_score["RMSE_VA"]
+            best_epoch = epoch
+            print("this is best")
 
-# Download the created zip file to local machine
-
-# %% [markdown]
-# ### Conclusion
-#
-# In this notebook, we walked through the full pipeline for **Dimensional Aspect Sentiment Regression (DimASR)**:
-#
-# 1. **Load data**: Import the competition JSONL files, split train/dev sets, and convert to DataFrames.
-# 2. **Build dataset & dataloaders**: Define a custom `VADataset` to tokenize text and prepare `[Valence, Arousal]` labels.
-# 3. **Train & evaluate**: Train BERT-based regressors and check model performance on the dev sets using PCC and RMSE metrics.
-# 4. **Predict & submit**: Run the trained models on the prediction sets, generate VA scores, and save results as JSONL for submission.
-#
-# This pipeline ensures that your model is trained, validated, and ready for competition submission. You can further improve results by tuning hyperparameters, trying different pretrained models, or applying data augmentation strategies.
-#
+    base_model = AutoModel.from_pretrained(model_path)
+    model = TransformerVARegressor(base_model).to(device)
+    tokenizer = AutoTokenizer.from_pretrained(model_path)
 
 
+    train_dataset = VADataset(train_df, tokenizer, tok_max_len)
+    train_loader = DataLoader(train_dataset, batch_size=batchsize, shuffle=True)
+
+    dev_dataset = VADataset(dev_df, tokenizer, tok_max_len)
+    dev_loader = DataLoader(dev_dataset, batch_size=batchsize, shuffle=True)
+
+    # lr = locals().get("lr", 1e-4)
+    # epochs = locals().get("epochs", 50)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=lr)
+    loss_fn = nn.MSELoss()
+
+    # okay do benchmark on every epoch
+    for epoch in range(epochs):
+        train_loss = train_epoch(model, train_loader, optimizer, loss_fn)
+        print(f"model: {model_name} Epoch: {epoch+1}: train={train_loss:.4f}")
+        val_loss = eval_epoch(model, dev_loader, loss_fn)
+        print(f"model: {model_name} Epoch: {epoch+1}: val={val_loss:.4f}")
+        _get_prd_dev(epoch=epoch)
+
+    base_model.save_pretrained(f"./models/{lang}/{model_name}")
+    tokenizer.save_pretrained(f"./models/{lang}/{model_name}")
+
+def mian_infer():
+    base_model = AutoModel.from_pretrained(model_path)
+    model = TransformerVARegressor(base_model).to(device)
+    tokenizer = AutoTokenizer.from_pretrained(model_path)
+
+    os.makedirs(f"./outputs/{model_name}/subtask_1", exist_ok=True)
+
+    for domain, predict_df in predict_dfs:
+        pred_dataset = VADataset(predict_df, tokenizer, tok_max_len)
+        pred_loader = DataLoader(pred_dataset, batch_size=batchsize, shuffle=True)
+        pred_v, pred_a, = get_prd(model, pred_loader, type="pred")
+
+        predict_df["Valence"] = pred_v
+        predict_df["Arousal"] = pred_a
+
+        df_to_jsonl(predict_df, f"./outputs/{model_name}/subtask_1/pred_{lang}_{domain}.jsonl")
+
+# main():
+# TODO may need to put lang before domain
+parser = argparse.ArgumentParser()
+parser.add_argument('train_or_infer', default="infer")
+# change what domain you want
+# parser.add_argument('domain', nargs='?', default="laptop")
+# change the language you want to test
+parser.add_argument('lang', nargs='?', default="jpn")
+parser.add_argument('--model-name', default="jhu-clsp/mmBERT-base")  # TODO rename to follow api
+# unsloth: use 2e-4 if the data is small
+parser.add_argument('--lr', type=float, default=2e-5)
+parser.add_argument('--epochs', type=int, default=50)
+parser.add_argument('--resume', type=bool, default=False)
+args = parser.parse_args()
+assert args.train_or_infer in ("train", "infer")
+
+# task config
+task = 1
+lang = args.lang
+assert lang in lang_domain
+# model config
+model_name = args.model_name
+# choose your encoding model
+supported_model_name = (
+    "google-bert/bert-base-multilingual-cased",
+    "ai-modelscope/roberta-large",
+    "answerdotai/ModernBERT-large",
+    "jhu-clsp/mmBERT-base"
+)
+assert model_name in supported_model_name
+if args.train_or_infer == "train":
+    model_path = MODEL_PREFIX + model_name
+elif args.train_or_infer == "infer":  # TODO more elegant way to read saved model
+    model_path = os.path.abspath(f"./models/{lang}/{model_name}")
+lr = args.lr
+epochs = args.epochs
+batchsize = 32
+tok_max_len = 512
+print(f"{lang=}, {model_path=}")
+print(f"lr: {lr}, epochs: {epochs}, batchsize: {batchsize}")
+device = "cuda"
+
+# ### Step 1: Load the competition data
+#
+# - Read JSONL files (train/dev/predict) into Colab.
+# - Train files contain Valence–Arousal (VA) labels.
+# - Predict files have no VA labels.
+# - This script:
+#   1. Loads the JSONL data.
+#   2. Splits 10% of train data as dev set.
+#   3. Converts JSONL into DataFrames (ID, Text, Aspect, Valence, Arousal).
+#   4. Prints the first few rows for checking.
+
+# FIXME would the model being too small to fit all train data?
+# TODO split these logic to their main?
+# train_urls = [f"{PREFIX}/subtask_1/{lang}/{lang}_{domain}_train_alltasks.jsonl" for domain in domain_lang.keys() for lang in domain_lang[domain]]
+train_urls = [f"{PREFIX}/subtask_1/{lang}/{lang}_{domain}_train_alltasks.jsonl" for domain in lang_domain[lang]]
+train_raw = []  # cause python flattening is sh*t, would rather use concat
+for url in train_urls: train_raw += load_jsonl(url)
+train_df = jsonl_to_df(train_raw)
+# split 10% for dev
+train_df, dev_df = train_test_split(train_df, test_size=0.1, random_state=42)
+
+# for one lang do all domain pred
+predict_urls = [ (domain, f"{PREFIX}/subtask_1/{lang}/{lang}_{domain}_dev_task{task}.jsonl") for domain in lang_domain[lang] ]
+predict_raws = [ (dom, load_jsonl(url)) for (dom, url) in predict_urls ]
+predict_dfs = [ (dom, jsonl_to_df(raw)) for (dom, raw) in predict_raws ]
+
+
+# ### Display the dataframe
+# TODO move this part to main
+from IPython.display import display, Markdown
+
+display(Markdown(f"### subtask_1_{lang}_alldomain train_df"))
+display(train_df.head())
+
+display(Markdown(f"### subtask_1_{lang}_alldomain dev_df"))
+display(dev_df.head())
+
+display(Markdown(f"### subtask_1_{lang}_alldomain predict_df"))
+for _, prd_df in predict_dfs:
+    display(prd_df.head())
+
+if args.train_or_infer == "train":
+    mian_train()
+elif args.train_or_infer == "infer":
+    mian_infer()
+else:
+    assert args.train_or_infer in ("train", "infer")
