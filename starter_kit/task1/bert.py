@@ -83,7 +83,7 @@ import os
 PREFIX = "../../task-dataset/track_a"
 MODEL_PREFIX = os.path.expanduser("~/.cache/modelscope/hub/models/")
 
-domain_lang = {
+domainLangs = {
     "hotel": ["jpn"],
     "restaurant": ["eng", "rus", "tat", "ukr", "zho"],
     "laptop": ["eng", "zho"],
@@ -474,17 +474,17 @@ def mian_train():
             print("earlystop and discard this epoch")
             break
         min_absloss = abs_loss
-        base_model.save_pretrained(f"./models/{lang}/{model_name}")
-        tokenizer.save_pretrained(f"./models/{lang}/{model_name}")
+        base_model.save_pretrained(save_model_path)
+        tokenizer.save_pretrained(save_model_path)
 
 def mian_infer():
     base_model = AutoModel.from_pretrained(model_path)
     model = TransformerVARegressor(base_model).to(device)
     tokenizer = AutoTokenizer.from_pretrained(model_path)
 
-    os.makedirs(f"./outputs/{model_name}/subtask_1", exist_ok=True)
+    os.makedirs(f"./outputs/all/subtask_1", exist_ok=True)
 
-    for domain, predict_df in predict_dfs:
+    for lang, predict_df in predict_dfs:
         pred_dataset = VADataset(predict_df, tokenizer, tok_max_len)
         pred_loader = DataLoader(pred_dataset, batch_size=batchsize, shuffle=True)
         pred_v, pred_a, = get_prd(model, pred_loader, type="pred")
@@ -492,31 +492,29 @@ def mian_infer():
         predict_df["Valence"] = pred_v
         predict_df["Arousal"] = pred_a
 
-        df_to_jsonl(predict_df, f"./outputs/{model_name}/subtask_1/pred_{lang}_{domain}.jsonl")
+        df_to_jsonl(predict_df, f"./outputs/all/subtask_1/pred_{lang}_{domain}.jsonl")
 
 # main():
 # TODO may need to put lang before domain
 parser = argparse.ArgumentParser()
 parser.add_argument('train_or_infer', default="infer")
 # change what domain you want
-# parser.add_argument('domain', nargs='?', default="laptop")
-# change the language you want to test
-parser.add_argument('lang', nargs='?', default="jpn")
+parser.add_argument('domain', nargs='?', default="laptop")
 parser.add_argument('-b', type=int, default="8")
 parser.add_argument('--model-name', default="jhu-clsp/mmBERT-base")  # TODO rename to follow api
 # unsloth: use 2e-4 if the data is small
 parser.add_argument('--lr', type=float, default=2e-5)
 parser.add_argument('--epochs', type=int, default=10)
 parser.add_argument('--resume', type=bool, default=False)
-parser.add_argument('--early-stop', type=bool, default=False, const=True)
+parser.add_argument('--early-stop', type=bool, default=False, const=True, nargs='?')
 args = parser.parse_args()
 assert args.train_or_infer in ("train", "infer")
 
 # task config
 task = 1
 early_stop = args.early_stop
-lang = args.lang
-assert lang in lang_domain
+domain = args.domain
+assert domain in domainLangs
 # model config
 model_name = args.model_name
 # choose your encoding model
@@ -530,19 +528,20 @@ hf_model = (
     "nlptown/bert-base-multilingual-uncased-sentiment",
 )
 assert model_name in (*ms_model, *hf_model)
+save_model_path = f"./models/{domain}/{model_name}"
 if args.train_or_infer == "train":
     if model_name in hf_model:
         model_path = model_name
     else:
         model_path = MODEL_PREFIX + model_name
 elif args.train_or_infer == "infer":  # TODO more elegant way to read saved model
-    model_path = os.path.abspath(f"./models/{lang}/{model_name}")
+    model_path = os.path.abspath(save_model_path)
 lr = args.lr
 epochs = args.epochs
 # FIXME on v100 16g, roberta large can only use batch=8, while bert base can use batch=32
 batchsize = args.b
 tok_max_len = 512
-print(f"{lang=}, {model_path=}")
+print(f"{domain=}, {model_path=}")
 print(f"lr: {lr}, epochs: {epochs}, batchsize: {batchsize}")
 device = "cuda"
 
@@ -559,30 +558,30 @@ device = "cuda"
 
 # FIXME would the model being too small to fit all train data?
 # TODO split these logic to their main?
-# train_urls = [f"{PREFIX}/subtask_1/{lang}/{lang}_{domain}_train_alltasks.jsonl" for domain in domain_lang.keys() for lang in domain_lang[domain]]
-train_urls = [f"{PREFIX}/subtask_1/{lang}/{lang}_{domain}_train_alltasks.jsonl" for domain in lang_domain[lang]]
+train_urls = [f"{PREFIX}/subtask_1/{lang}/{lang}_{domain}_train_alltasks.jsonl" for lang in domainLangs[domain]]
+# train_urls = [f"{PREFIX}/subtask_1/{lang}/{lang}_{domain}_train_alltasks.jsonl" for domain in lang_domain[lang]]
 train_raws = [load_jsonl(x) for x in train_urls]
 train_df = pd.concat((jsonl_to_df(x) for x in train_raws))
 # split 10% for dev
 train_df, dev_df = train_test_split(train_df, test_size=0.1, random_state=42)
 
-# for one lang do all domain pred
-predict_urls = [ (domain, f"{PREFIX}/subtask_1/{lang}/{lang}_{domain}_dev_task{task}.jsonl") for domain in lang_domain[lang] ]
-predict_raws = [ (dom, load_jsonl(url)) for (dom, url) in predict_urls ]
-predict_dfs = [ (dom, jsonl_to_df(raw)) for (dom, raw) in predict_raws ]
+# for one domain do all lang pred
+predict_urls = [ (lang, f"{PREFIX}/subtask_1/{lang}/{lang}_{domain}_dev_task{task}.jsonl") for lang in domainLangs[domain] ]
+predict_raws = [ (x, load_jsonl(url)) for (x, url) in predict_urls ]
+predict_dfs = [ (x, jsonl_to_df(raw)) for (x, raw) in predict_raws ]
 
 
 # ### Display the dataframe
 # TODO move this part to main
 from IPython.display import display, Markdown
 
-display(Markdown(f"### subtask_1_{lang}_alldomain train_df"))
+display(Markdown(f"### subtask_1_lang_{domain} train_df"))
 display(train_df.head())
 
-display(Markdown(f"### subtask_1_{lang}_alldomain dev_df"))
+display(Markdown(f"### subtask_1_lang_{domain} dev_df"))
 display(dev_df.head())
 
-display(Markdown(f"### subtask_1_{lang}_alldomain predict_df"))
+display(Markdown(f"### subtask_1_lang_{domain} predict_df"))
 for _, prd_df in predict_dfs:
     display(prd_df.head())
 
