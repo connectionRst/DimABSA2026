@@ -61,7 +61,30 @@ def train(model_id, model_type, lr, task, domain, *, resume=False):
 
     # covert dataset to train template
     # yes, as tokenizer need to be loaded first, this cannot be raised top
-    train_dataset = dataset["train"].map(lambda x: mytools.to_task_prompt_mapper(x, task=task, tokenizer=tokenizer)) # type: ignore
+    def task2prompt_mapper(x):
+        text = x["Text"]
+        quads = x.get("Quadruplet", [])
+        if task == 2:
+            answer = ", ".join([
+                f"({q['Aspect']}, {q['Opinion']}, {q['VA']})"
+                for q in quads
+            ])
+            instruction = mytools.get_instruction_task2()
+        elif task == 3:
+            answer = ", ".join((
+                f"({q['Aspect']}, {q['Category']}, {q['Opinion']}, {q['VA']})"
+                for q in quads
+            ))
+            instruction = mytools.get_instruction_task3(domain)
+        else: raise ValueError("invalid task", task)
+        prompt = instruction + "[Text] " + text + "\n\nOutput:"
+        msg = mytools.wrap_prompt(model_type, prompt, answer)
+        return { "text": tokenizer.apply_chat_template(
+                    msg, tokenize=False, add_generation_prompt=False,
+                    add_special_tokens=False
+                )
+            }
+    train_dataset = dataset["train"].map(task2prompt_mapper) # type: ignore
 
     # show your template text
     print(train_dataset[100]["text"]) # type: ignore
