@@ -432,6 +432,7 @@ def extract_num(s):
 def mian_train():
     lowest_rmseva = 5
     best_epoch = 0
+    min_absloss = 999
     def _get_prd_dev(*, epoch = 0):
         nonlocal lowest_rmseva, best_epoch
         # print("get_prd(dev) start")
@@ -467,10 +468,14 @@ def mian_train():
         print(f"model: {model_name} Epoch: {epoch+1}: train={train_loss:.4f}")
         val_loss = eval_epoch(model, dev_loader, loss_fn)
         print(f"model: {model_name} Epoch: {epoch+1}: val={val_loss:.4f}")
-        if not _get_prd_dev(epoch=epoch) and early_stop: break
-
-    base_model.save_pretrained(f"./models/{lang}/{model_name}")
-    tokenizer.save_pretrained(f"./models/{lang}/{model_name}")
+        abs_loss = abs(train_loss - val_loss)
+        print(f"absloss:", abs_loss)
+        if (not _get_prd_dev(epoch=epoch) and min_absloss < abs_loss) and early_stop:
+            print("earlystop and discard this epoch")
+            break
+        min_absloss = abs_loss
+        base_model.save_pretrained(f"./models/{lang}/{model_name}")
+        tokenizer.save_pretrained(f"./models/{lang}/{model_name}")
 
 def mian_infer():
     base_model = AutoModel.from_pretrained(model_path)
