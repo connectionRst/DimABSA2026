@@ -100,6 +100,17 @@ lang_domain = {
     "ukr": ["restaurant"],
 }
 
+ms_model = (
+    "google-bert/bert-base-multilingual-cased",
+    "ai-modelscope/xlm-roberta-large",
+    "jhu-clsp/mmBERT-base",
+    "microsoft/mdeberta-v3-base"
+)
+
+hf_model = (
+    "nlptown/bert-base-multilingual-uncased-sentiment",
+)
+
 def load_jsonl(filepath: str) -> List[Dict]:
     with open(filepath, "r", encoding="utf-8") as f:
         return [json.loads(line) for line in f]
@@ -482,7 +493,7 @@ def mian_infer():
     model = TransformerVARegressor(base_model).to(device)
     tokenizer = AutoTokenizer.from_pretrained(model_path)
 
-    os.makedirs(f"./outputs/all/subtask_1", exist_ok=True)
+    os.makedirs(jsonl_path, exist_ok=True)
 
     for lang, predict_df in predict_dfs:
         pred_dataset = VADataset(predict_df, tokenizer, tok_max_len)
@@ -492,7 +503,7 @@ def mian_infer():
         predict_df["Valence"] = pred_v
         predict_df["Arousal"] = pred_a
 
-        df_to_jsonl(predict_df, f"./outputs/all/subtask_1/pred_{lang}_{domain}.jsonl")
+        df_to_jsonl(predict_df, jsonl_path + f"pred_{lang}_{domain}.jsonl")
 
 # main():
 # TODO may need to put lang before domain
@@ -514,19 +525,10 @@ assert args.train_or_infer in ("train", "infer")
 task = 1
 early_stop = args.early_stop
 domain = args.domain
-assert domain in domainLangs
+assert domain in domainLangs.keys()
 # model config
 model_name = args.model_name
 # choose your encoding model
-ms_model = (
-    "google-bert/bert-base-multilingual-cased",
-    "ai-modelscope/xlm-roberta-large",
-    "jhu-clsp/mmBERT-base",
-    "microsoft/mdeberta-v3-base"
-)
-hf_model = (
-    "nlptown/bert-base-multilingual-uncased-sentiment",
-)
 assert model_name in (*ms_model, *hf_model)
 save_model_path = f"./models/{domain}/{model_name}"
 if args.train_or_infer == "train":
@@ -544,6 +546,7 @@ tok_max_len = 512
 print(f"{domain=}, {model_path=}")
 print(f"lr: {lr}, epochs: {epochs}, batchsize: {batchsize}")
 device = "cuda"
+jsonl_path = f"./outputs/{model_name}/subtask_1/"
 
 # ### Step 1: Load the competition data
 #
